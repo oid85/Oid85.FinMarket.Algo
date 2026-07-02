@@ -17,15 +17,15 @@ public class AlgoController(
     : BaseController
 {
     /// <summary>
-    /// Бэктест
+    /// Стратегия
     /// </summary>
-    [HttpPost("backtest")]
-    [ProducesResponseType(typeof(BaseResponse<CreateBacktestResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<CreateBacktestResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<CreateBacktestResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> CreateBacktestAsync(
-        [FromBody] CreateBacktestRequest request) =>
+    [HttpPost("strategy")]
+    [ProducesResponseType(typeof(BaseResponse<GetStrategyResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetStrategyResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetStrategyResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> GetStrategyAsync(
+        [FromBody] GetStrategyRequest request) =>
         GetResponseAsync(
-            () => algoService.CreateBacktestAsync(request),
-            result => new BaseResponse<CreateBacktestResponse> { Result = result });
+            () => algoService.GetStrategyAsync(request),
+            result => new BaseResponse<GetStrategyResponse> { Result = result });
 }

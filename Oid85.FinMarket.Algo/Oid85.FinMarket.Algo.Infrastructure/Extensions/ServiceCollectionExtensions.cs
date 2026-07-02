@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Oid85.FinMarket.Algo.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Algo.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Algo.Common.KnownConstants;
+using Oid85.FinMarket.Algo.Infrastructure.ApiClients;
 using Oid85.FinMarket.Algo.Infrastructure.Database;
 using Oid85.FinMarket.Algo.Infrastructure.Database.Repositories;
 
@@ -26,6 +28,19 @@ public static class ServiceCollectionExtensions
                 .EnableServiceProviderCaching(false), poolSize: 32);
 
         services.AddTransient<IParameterRepository, ParameterRepository>();
+    }
+
+    public static void ConfigureStorageApiClient(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddHttpClient(KnownHttpClients.FinMarketStorageServiceApiClient, client =>
+        {
+            string baseUrl = configuration.GetValue<string>(KnownSettingsKeys.FinMarketStorageServiceApiClientBaseAddress)!;
+            client.BaseAddress = new Uri(baseUrl);
+        });
+
+        services.AddTransient<IStorageApiClient, StorageApiClient>();
     }
 
     public static async Task ApplyMigrations(this IHost host)

@@ -5,6 +5,6 @@ namespace Oid85.FinMarket.Algo.Application.Interfaces.Services
 {
     public interface IAlgoService
     {
-        Task<CreateBacktestResponse> CreateBacktestAsync(CreateBacktestRequest request);
+        Task<GetStrategyResponse> GetStrategyAsync(GetStrategyRequest request);
     }
 }

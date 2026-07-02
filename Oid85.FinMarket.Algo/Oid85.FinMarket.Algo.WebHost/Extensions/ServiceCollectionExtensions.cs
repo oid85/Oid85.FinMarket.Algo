@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using NLog;
 using ILogger = NLog.ILogger;

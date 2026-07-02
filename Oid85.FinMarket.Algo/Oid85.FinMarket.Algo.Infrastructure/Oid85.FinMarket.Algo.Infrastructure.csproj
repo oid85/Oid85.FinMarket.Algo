@@ -25,6 +25,7 @@
 		<PackageReference Include="NLog.Targets.Seq" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 		<PackageReference Include="Npgsql" />
+		<PackageReference Include="Tinkoff.InvestApi" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\Oid85.FinMarket.Algo.Application\Oid85.FinMarket.Algo.Application.csproj" />
