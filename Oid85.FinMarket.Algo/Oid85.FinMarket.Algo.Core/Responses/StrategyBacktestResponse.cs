@@ -1,6 +1,6 @@
 ﻿namespace Oid85.FinMarket.Algo.Core.Responses
 {
-    public class GetStrategyResponse
+    public class StrategyBacktestResponse
     {
     }
 }

@@ -9,6 +9,7 @@ public static class ServiceCollectionExtensions
     public static void ConfigureApplicationServices(
         this IServiceCollection services)
     {
-        services.AddTransient<IAlgoService, AlgoService>();
+        services.AddScoped<IAlgoService, AlgoService>();
+        services.AddScoped<IDataService, DataService>();
     }
 }

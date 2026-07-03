@@ -17,15 +17,28 @@ public class AlgoController(
     : BaseController
 {
     /// <summary>
-    /// Стратегия
+    /// Бэктест
     /// </summary>
-    [HttpPost("strategy")]
-    [ProducesResponseType(typeof(BaseResponse<GetStrategyResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<GetStrategyResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<GetStrategyResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> GetStrategyAsync(
-        [FromBody] GetStrategyRequest request) =>
+    [HttpPost("strategy/backtest")]
+    [ProducesResponseType(typeof(BaseResponse<StrategyBacktestResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<StrategyBacktestResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<StrategyBacktestResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> StrategyBacktestAsync(
+        [FromBody] StrategyBacktestRequest request) =>
         GetResponseAsync(
-            () => algoService.GetStrategyAsync(request),
-            result => new BaseResponse<GetStrategyResponse> { Result = result });
+            () => algoService.StrategyBacktestAsync(request),
+            result => new BaseResponse<StrategyBacktestResponse> { Result = result });
+
+    /// <summary>
+    /// Оптимизация
+    /// </summary>
+    [HttpPost("strategy/optimization")]
+    [ProducesResponseType(typeof(BaseResponse<StrategyOptimizationResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<StrategyOptimizationResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<StrategyOptimizationResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> StrategyOptimizationAsync(
+        [FromBody] StrategyOptimizationRequest request) =>
+        GetResponseAsync(
+            () => algoService.StrategyOptimizationAsync(request),
+            result => new BaseResponse<StrategyOptimizationResponse> { Result = result });
 }

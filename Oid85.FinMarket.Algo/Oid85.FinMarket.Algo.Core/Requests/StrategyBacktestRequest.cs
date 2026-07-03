@@ -1,6 +1,6 @@
 ﻿namespace Oid85.FinMarket.Algo.Core.Requests
 {
-    public class GetStrategyRequest
+    public class StrategyBacktestRequest
     {
 
     }

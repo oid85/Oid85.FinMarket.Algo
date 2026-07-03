@@ -6,9 +6,14 @@ namespace Oid85.FinMarket.Algo.Application.Services
 {
     public class AlgoService : IAlgoService
     {
-        public async Task<GetStrategyResponse> GetStrategyAsync(GetStrategyRequest request)
+        public async Task<StrategyBacktestResponse> StrategyBacktestAsync(StrategyBacktestRequest request)
         {
             return new ();
+        }
+
+        public async Task<StrategyOptimizationResponse> StrategyOptimizationAsync(StrategyOptimizationRequest request)
+        {
+            return new();
         }
     }
 }
