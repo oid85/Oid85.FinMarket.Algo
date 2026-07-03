@@ -301,6 +301,10 @@ public class Strategy
 
         DiagramPoints.Clear();
         for (int i = 0; i < Candles.Count; i++)
-            DiagramPoints.Add(new());
+            DiagramPoints.Add(new()
+            {
+                Index = Candles[i].Index,
+                Date = DateOnly.FromDateTime(Candles[i].DateTime),
+            });
     }
 }

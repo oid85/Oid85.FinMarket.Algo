@@ -13,7 +13,7 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
             int period = Parameters["Period"];
             
             // Расчет индикаторов
-            List<double> us = indicatorFactory.UltimateSmoother(ClosePrices, period);
+            var us = indicatorFactory.UltimateSmoother(ClosePrices, period);
 
             for (int i = StabilizationPeriod; i < Candles.Count - 1; i++)
             {
