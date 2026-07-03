@@ -29,8 +29,10 @@ public class Strategy
     public Dictionary<string, int> Parameters { get; set; } = [];
 
     public int StabilizationPeriod { get; set; } = 1;
-    
+
     public List<Candle> Candles { get; set; } = [];
+
+    public AlgoDataContext AlgoDataContext { get; set; } = new();
 
     public List<double> OpenPrices => [.. Candles.Select(x => x.Open)];
     
@@ -288,7 +290,11 @@ public class Strategy
 
     }
 
-    public void InitForParameterSet(Dictionary<string, int> parameterSet, int stabilizationPeriod, double startMoney, double endMoney)
+    public void InitForParameterSet(
+        Dictionary<string, int> parameterSet, 
+        int stabilizationPeriod, 
+        double startMoney, 
+        double endMoney)
     {
         Parameters = parameterSet;
         StopLimits.Clear();

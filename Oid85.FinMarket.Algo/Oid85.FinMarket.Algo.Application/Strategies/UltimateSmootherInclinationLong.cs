@@ -3,6 +3,10 @@ using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Strategies
 {
+    /// <summary>
+    /// Правило входа  - индикатор UltimateSmoother растет в течение 3-х периодов подряд
+    /// Правило выхода - индикатор UltimateSmoother падает в течение 3-х периодов подряд
+    /// </summary>
     public class UltimateSmootherInclinationLong(
         IIndicatorFactory indicatorFactory)
         : Strategy

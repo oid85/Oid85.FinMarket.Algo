@@ -19,7 +19,7 @@ public class IndicatorFactory : IIndicatorFactory
 
     public List<double> Supertrend(List<Candle> candles, int period, double multiplier) =>
         candles
-            .Select(AlgoMapper.Map)
+            .Select(ApplicationMapper.Map)
             .GetSuperTrend(period, multiplier)
             .Select(x => x.SuperTrend)
             .Select(x => x.HasValue ? Convert.ToDouble(x.Value) : 0.0)
@@ -27,7 +27,7 @@ public class IndicatorFactory : IIndicatorFactory
 
     public List<double> Atr(List<Candle> candles, int period) =>
         candles
-            .Select(AlgoMapper.Map)
+            .Select(ApplicationMapper.Map)
             .GetAtr(period)
             .Select(x => x.Atr)
             .Select(x => x.HasValue ? Convert.ToDouble(x.Value) : 0.0)
@@ -35,7 +35,7 @@ public class IndicatorFactory : IIndicatorFactory
 
     public List<double> Hma(List<Candle> candles, int period) =>
         candles
-            .Select(AlgoMapper.Map)
+            .Select(ApplicationMapper.Map)
             .GetHma(period)
             .Select(x => x.Hma)
             .Select(x => x.HasValue ? Convert.ToDouble(x.Value) : 0.0)
@@ -43,7 +43,7 @@ public class IndicatorFactory : IIndicatorFactory
     
     public List<double> Ema(List<Candle> candles, int period) =>
         candles
-            .Select(AlgoMapper.Map)
+            .Select(ApplicationMapper.Map)
             .GetEma(period)
             .Select(x => x.Ema)
             .Select(x => x.HasValue ? Convert.ToDouble(x.Value) : 0.0)
@@ -51,7 +51,7 @@ public class IndicatorFactory : IIndicatorFactory
     
     public List<double> Adx(List<Candle> candles, int period) =>
         candles
-            .Select(AlgoMapper.Map)
+            .Select(ApplicationMapper.Map)
             .GetAdx(period)
             .Select(x => x.Adx)
             .Select(x => x.HasValue ? Convert.ToDouble(x.Value) : 0.0)
@@ -84,7 +84,7 @@ public class IndicatorFactory : IIndicatorFactory
 
     public (List<double> UpperBand, List<double> LowerBand) BollingerBands(List<Candle> candles, int period, double stdDev)
     {
-        var quotes = candles.Select(AlgoMapper.Map);
+        var quotes = candles.Select(ApplicationMapper.Map);
         var bollingerBandsResults = quotes.GetBollingerBands(period, stdDev);
         
         var upperBand = new List<double>();

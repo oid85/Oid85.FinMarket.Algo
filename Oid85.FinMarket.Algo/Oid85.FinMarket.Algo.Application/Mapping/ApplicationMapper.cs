@@ -3,7 +3,7 @@ using Skender.Stock.Indicators;
 
 namespace Oid85.FinMarket.Algo.Application.Mapping;
 
-public static class AlgoMapper
+public static class ApplicationMapper
 {
     public static Quote Map(Candle model) =>
         new()
