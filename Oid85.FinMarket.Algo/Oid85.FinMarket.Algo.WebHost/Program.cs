@@ -1,9 +1,10 @@
 using System.Text.Json.Serialization;
-using Oid85.FinMarket.Algo.Common.KnownConstants;
-using Oid85.FinMarket.Algo.WebHost.Extensions;
 using Oid85.FinMarket.Algo.Application.Extensions;
-using Oid85.FinMarket.Algo.Infrastructure.Extensions;
 using Oid85.FinMarket.Algo.Common.Converters;
+using Oid85.FinMarket.Algo.Common.KnownConstants;
+using Oid85.FinMarket.Algo.Core.Configuration;
+using Oid85.FinMarket.Algo.Infrastructure.Extensions;
+using Oid85.FinMarket.Algo.WebHost.Extensions;
 
 namespace Oid85.FinMarket.Algo.WebHost
 {
@@ -12,6 +13,10 @@ namespace Oid85.FinMarket.Algo.WebHost
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.Configure<AlgoSettings>(
+                builder.Configuration.GetSection("AlgoSettings")
+            );
 
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
