@@ -2,6 +2,9 @@
 {
     public class AlgoSettings
     {
+        public PeriodSettings PeriodSettings { get; set; } = new();
+        public MoneyManagementSettings MoneyManagementSettings { get; set; } = new();
+        public StrategyExecuteResultFilterSettings StrategyExecuteResultFilterSettings { get; set; } = new();
         public List<TickerlistSettings> TickerLists { get; set; } = [];
         public List<StrategySettings> Strategies { get; set; } = [];
     }
@@ -31,5 +34,29 @@
         public int Min { get; set; }
         public int Max { get; set; }
         public int Step { get; set; }
+    }
+
+    public class PeriodSettings
+    {
+        public int StabilizationPeriodInCandles { get; set; }
+        public int OptimizationWindowInDays { get; set; }
+        public int BacktestWindowInDays { get; set; }
+        public int BacktestShiftInDays { get; set; }
+    }
+
+    public class MoneyManagementSettings
+    {
+        public double Money { get; set; }
+        public double ShareLeverage { get; set; }
+    }
+
+    public class StrategyExecuteResultFilterSettings
+    {
+        public double MinProfitFactor { get; set; }
+        public double MinRecoveryFactor { get; set; }
+        public double MinWinningTradesPercent { get; set; }
+        public double MaxWinningTradesPercent { get; set; }
+        public double MinAnnualYieldReturn { get; set; }
+        public double MaxDrawdownPercent { get; set; }
     }
 }

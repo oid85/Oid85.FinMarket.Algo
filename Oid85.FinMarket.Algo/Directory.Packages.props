@@ -5,7 +5,8 @@
     <NoWarn>$(NoWarn);NU1507</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-	<PackageVersion Include="Skender.Stock.Indicators" Version="2.5.0" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    <PackageVersion Include="Skender.Stock.Indicators" Version="2.5.0" />
     <PackageVersion Include="Tinkoff.InvestApi" Version="0.6.14" />
     <PackageVersion Include="EFCore.NamingConventions" Version="8.0.3" />
     <PackageVersion Include="Hangfire" Version="1.8.17" />
