@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Oid85.FinMarket.Algo.Infrastructure.Database;
@@ -11,9 +12,11 @@ using Oid85.FinMarket.Algo.Infrastructure.Database;
 namespace Oid85.FinMarket.Algo.Infrastructure.Migrations
 {
     [DbContext(typeof(AlgoContext))]
-    partial class AlgoContextModelSnapshot : ModelSnapshot
+    [Migration("20260704160732_04072026_1")]
+    partial class _04072026_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

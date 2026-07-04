@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
                 .UseNpgsql(configuration.GetValue<string>(KnownSettingsKeys.PostgresAlgoConnectionString)!)
                 .EnableServiceProviderCaching(false), poolSize: 32);
 
-        services.AddTransient<IParameterRepository, ParameterRepository>();
+        services.AddScoped<IParameterRepository, ParameterRepository>();
     }
 
     public static void ConfigureStorageApiClient(
@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
             client.BaseAddress = new Uri(baseUrl);
         });
 
-        services.AddTransient<IStorageApiClient, StorageApiClient>();
+        services.AddScoped<IStorageApiClient, StorageApiClient>();
     }
 
     public static async Task ApplyMigrations(this IHost host)

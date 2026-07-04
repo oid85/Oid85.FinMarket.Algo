@@ -2,6 +2,6 @@
 {
     public class StrategyBacktestRequest
     {
-
+        public string PortfolioName { get; set; }
     }
 }

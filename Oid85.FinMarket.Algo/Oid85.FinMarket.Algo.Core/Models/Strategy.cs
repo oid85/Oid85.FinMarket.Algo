@@ -209,10 +209,10 @@ public class Strategy
 		// Пробуем выйти по стопу
 		if (LastActivePosition is not null && StopLimits[candleIndex - 1] is not null)		
 		{
-			if (position.IsLong && Candles[candleIndex - 1].Close <= StopLimits[candleIndex - 1]!.Value.StopPrice)			
+			if (position.IsLong && Candles[candleIndex - 1].Close <= StopLimits[candleIndex - 1]!.StopPrice)			
 				SellAtPrice(position.Quantity, stopPrice, candleIndex);	
 			
-			else if (position.IsShort && Candles[candleIndex - 1].Close >= StopLimits[candleIndex - 1]!.Value.StopPrice)			
+			else if (position.IsShort && Candles[candleIndex - 1].Close >= StopLimits[candleIndex - 1]!.StopPrice)			
 				BuyAtPrice(position.Quantity, stopPrice, candleIndex);				
 		}
 		

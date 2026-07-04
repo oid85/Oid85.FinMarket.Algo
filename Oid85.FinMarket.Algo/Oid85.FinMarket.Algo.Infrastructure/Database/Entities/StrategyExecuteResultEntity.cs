@@ -1,12 +1,9 @@
-﻿namespace Oid85.FinMarket.Algo.Core.Models;
+﻿using Oid85.FinMarket.Algo.Infrastructure.Database.Entities.Base;
 
-public class StrategyExecuteResult
-{
-    /// <summary>
-    /// Id
-    /// </summary>
-    public Guid Id { get; set; }
-    
+namespace Oid85.FinMarket.Algo.Infrastructure.Database.Entities;
+
+public class StrategyExecuteResultEntity : BaseEntity
+{    
     /// <summary>
     /// Начало периода
     /// </summary>
@@ -20,32 +17,27 @@ public class StrategyExecuteResult
     /// <summary>
     /// Тикер инструмента
     /// </summary>
-    public string Ticker { get; set; } = string.Empty;
-    
-    /// <summary>
-    /// Таймфрейм
-    /// </summary>
-    public string Timeframe { get; set; } = string.Empty;   
+    public string Ticker { get; set; }
     
     /// <summary>
     /// Описание стратегии
     /// </summary>
-    public string StrategyDescription { get; set; } = string.Empty;
+    public string StrategyDescription { get; set; }
     
     /// <summary>
     /// Наименование стратегии
     /// </summary>
-    public string StrategyName { get; set; } = string.Empty;
+    public string StrategyName { get; set; }
     
     /// <summary>
     /// Параметры стратегии
     /// </summary>
-    public string StrategyParams { get; set; } = string.Empty;
+    public string StrategyParams { get; set; }
     
     /// <summary>
     /// Параметры стратегии (хэш)
     /// </summary>
-    public string StrategyParamsHash { get; set; } = string.Empty;
+    public string StrategyParamsHash { get; set; }
     
     /// <summary>
     /// Количество сделок

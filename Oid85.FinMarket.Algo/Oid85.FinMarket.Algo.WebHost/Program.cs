@@ -31,6 +31,7 @@ namespace Oid85.FinMarket.Algo.WebHost
             builder.Services.ConfigureCors(builder.Configuration);
             builder.Services.ConfigureApplicationServices();
             builder.Services.ConfigureInfrastructure(builder.Configuration);
+            builder.Services.ConfigureStorageApiClient(builder.Configuration);
 
             builder.Services.AddWindowsService(options =>
             {
