@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
                 .UseNpgsql(configuration.GetValue<string>(KnownSettingsKeys.PostgresAlgoConnectionString)!)
                 .EnableServiceProviderCaching(false), poolSize: 32);
 
-        services.AddScoped<IParameterRepository, ParameterRepository>();
+        services.AddScoped<IStrategyExecuteResultRepository, StrategyExecuteResultRepository>();
     }
 
     public static void ConfigureStorageApiClient(

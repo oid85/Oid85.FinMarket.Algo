@@ -2,7 +2,7 @@
 
 namespace Oid85.FinMarket.Algo.Infrastructure.Database.Repositories
 {
-    public class ParameterRepository : IParameterRepository
+    public class StrategyExecuteResultRepository : IStrategyExecuteResultRepository
     {
     }
 }
