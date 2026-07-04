@@ -2,37 +2,29 @@
 
 public class Strategy
 {
-    public Guid StrategyId { get; set; }
-    
     public double StartMoney { get; set; }
 
     public double EndMoney { get; set; }
     
     public string Ticker { get; set; } = string.Empty;
     
-    public bool IsFuture { get; set; }
-    
-    public double BasicAssetSize { get; set; } = 1.0;
-    
-    public double Leverage { get; set; } = 1.0;
-    
-    public string Timeframe { get; set; } = string.Empty;
+    public double Leverage { get; set; } = 1.0;   
     
     public string StrategyDescription { get; set; } = string.Empty;
     
     public string StrategyName { get; set; } = string.Empty;
+
+    public DateOnly StartDate => Candles.First().Date;
     
-    public DateOnly StartDate => DateOnly.FromDateTime(Candles.First().DateTime);
-    
-    public DateOnly EndDate => DateOnly.FromDateTime(Candles.Last().DateTime);
+    public DateOnly EndDate => Candles.Last().Date;
     
     public Dictionary<string, int> Parameters { get; set; } = [];
 
     public int StabilizationPeriod { get; set; } = 1;
-
-    public List<Candle> Candles { get; set; } = [];
-
+    
     public AlgoDataContext AlgoDataContext { get; set; } = new();
+
+    public List<Candle> Candles => AlgoDataContext.CandleData[Ticker];
 
     public List<double> OpenPrices => [.. Candles.Select(x => x.Open)];
     
@@ -64,10 +56,7 @@ public class Strategy
     {
         if (EndMoney <= orderPrice)
             return 0;
-        
-        if (IsFuture)
-            return orderPrice == 0.0 || BasicAssetSize == 0.0 ? 0 : Convert.ToInt32(EndMoney / (orderPrice * BasicAssetSize) * Leverage);
-        
+
         return orderPrice == 0.0 ? 0 : Convert.ToInt32(EndMoney / orderPrice * Leverage);        
     }
 
@@ -126,7 +115,7 @@ public class Strategy
             CandleIndex = candleIndex,
             Quantity = Math.Abs(quantity),
             Price = price,
-            DateTime = Candles[candleIndex].DateTime
+            Date = Candles[candleIndex].Date
         });
 
     public void SellAtPrice(int quantity, double price, int candleIndex) =>
@@ -135,7 +124,7 @@ public class Strategy
             CandleIndex = candleIndex,
             Quantity = -1 * Math.Abs(quantity),
             Price = price,
-            DateTime = Candles[candleIndex].DateTime
+            Date = Candles[candleIndex].Date
         });
 
     private void AddTrade(Trade trade)
@@ -148,7 +137,7 @@ public class Strategy
             {
                 Ticker = Ticker,
                 EntryPrice = trade.Price,
-                EntryDateTime = trade.DateTime,
+                EntryDate = trade.Date,
                 EntryCandleIndex = trade.CandleIndex,
                 IsActive = true,
                 IsLong = trade.Quantity > 0,
@@ -162,7 +151,7 @@ public class Strategy
             int count = Positions.Count;
 
             Positions[count - 1].ExitPrice = trade.Price;
-            Positions[count - 1].ExitDateTime = trade.DateTime;
+            Positions[count - 1].ExitDate = trade.Date;
             Positions[count - 1].ExitCandleIndex = trade.CandleIndex;
             Positions[count - 1].IsActive = false;
 
@@ -183,7 +172,7 @@ public class Strategy
             
             EndMoney += profit;
             
-            EqiutyCurve.TryAdd(Positions[count - 1].ExitDateTime, Positions[count - 1].TotalProfit);
+            EqiutyCurve.TryAdd(Positions[count - 1].ExitDate, Positions[count - 1].TotalProfit);
             
             double drawdown;
             
@@ -199,7 +188,7 @@ public class Strategy
                     : maxTotalProfit - Positions[count - 1].TotalProfit;
             }
             
-            DrawdownCurve.TryAdd(Positions[count - 1].ExitDateTime, drawdown);
+            DrawdownCurve.TryAdd(Positions[count - 1].ExitDate, drawdown);
         }
     }
 
@@ -243,9 +232,9 @@ public class Strategy
             BuyAtPrice(position.Quantity, price, candleIndex);
     }
 
-    public Dictionary<DateTime, double> EqiutyCurve { get; set; } = [];
+    public Dictionary<DateOnly, double> EqiutyCurve { get; set; } = [];
 
-    public Dictionary<DateTime, double> DrawdownCurve  { get; set; } = [];
+    public Dictionary<DateOnly, double> DrawdownCurve  { get; set; } = [];
     
     public double ProfitFactor
     {
@@ -310,7 +299,7 @@ public class Strategy
             DiagramPoints.Add(new()
             {
                 Index = Candles[i].Index,
-                Date = DateOnly.FromDateTime(Candles[i].DateTime),
+                Date = Candles[i].Date
             });
     }
 }

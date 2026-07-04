@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Oid85.FinMarket.Algo.Application.Helpers;
 using Oid85.FinMarket.Algo.Application.Interfaces.Services;
 using Oid85.FinMarket.Algo.Application.Services;
 using Oid85.FinMarket.Algo.Application.Strategies;
@@ -13,6 +14,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IAlgoService, AlgoService>();
         services.AddScoped<IDataService, DataService>();
+
+        services.AddScoped<AlgoHelper>();
 
         services.AddKeyedTransient<Strategy, UltimateSmootherInclinationLong>("UltimateSmootherInclinationLong");
     }

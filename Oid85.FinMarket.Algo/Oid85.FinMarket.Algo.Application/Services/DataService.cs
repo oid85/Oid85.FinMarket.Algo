@@ -47,9 +47,9 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     Low = x.Low,
                     High = x.High,
                     Volume = x.Volume,
-                    DateTime = x.Date.ToDateTime(TimeOnly.MinValue)
+                    Date = x.Date
                 })
-                .OrderBy(x => x.DateTime)
+                .OrderBy(x => x.Date)
                 .ToList();
 
             for (int i = 0; i < candles.Count; i++) candles[i].Index = i;

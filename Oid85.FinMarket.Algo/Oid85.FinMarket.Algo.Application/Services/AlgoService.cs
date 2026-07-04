@@ -11,7 +11,9 @@ namespace Oid85.FinMarket.Algo.Application.Services
         : IAlgoService
     {
         public async Task<StrategyBacktestResponse> StrategyBacktestAsync(StrategyBacktestRequest request)
-        {            
+        {
+            var algoSettings = options.Value;
+
             return new ();
         }
 

@@ -5,8 +5,8 @@ public class Position
     public string Ticker { get; set; } = string.Empty;
     public double EntryPrice { get; set; }
     public double ExitPrice { get; set; }
-    public DateTime EntryDateTime { get; set; }
-    public DateTime ExitDateTime { get; set; }
+    public DateOnly EntryDate { get; set; }
+    public DateOnly ExitDate { get; set; }
     public int EntryCandleIndex { get; set; }
     public int ExitCandleIndex { get; set; }
     public bool IsActive { get; set; }

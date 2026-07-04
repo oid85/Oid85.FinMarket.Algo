@@ -12,6 +12,6 @@ public static class ApplicationMapper
             Close = Convert.ToDecimal(model.Close),
             High = Convert.ToDecimal(model.High),
             Low = Convert.ToDecimal(model.Low),
-            Date = model.DateTime
+            Date = model.Date.ToDateTime(TimeOnly.MinValue)
         };
 }
