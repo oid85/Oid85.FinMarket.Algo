@@ -4,9 +4,9 @@
     {
         public BacktestSettings BacktestSettings { get; set; }
         public StrategyExecuteResultFilterSettings StrategyExecuteResultFilter { get; set; }
-        public PortfolioSettings[] Portfolios { get; set; }
-        public TickerListSettings[] TickerLists { get; set; }
-        public StrategySettings[] Strategies { get; set; }
+        public List<PortfolioSettings> Portfolios { get; set; }
+        public List<TickerListSettings> TickerLists { get; set; }
+        public List<StrategySettings> Strategies { get; set; }
     }
 
     public class BacktestSettings
@@ -34,28 +34,27 @@
         public double Money { get; set; }
         public double Leverage { get; set; }
         public string TickerList { get; set; }
-        public PortfolioStrategySettings[] PortfolioStrategies { get; set; }
+        public List<PortfolioStrategySettings> PortfolioStrategies { get; set; }
     }
 
     public class PortfolioStrategySettings
     {
         public string Name { get; set; }
         public bool Enable { get; set; }
-        public double SizeCoefficient { get; set; }
     }
 
     public class TickerListSettings
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string[] Tickers { get; set; }
+        public List<string> Tickers { get; set; }
     }
 
     public class StrategySettings
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public StrategyParameterSettings[] StrategyParameters { get; set; }
+        public List<StrategyParameterSettings> StrategyParameters { get; set; }
     }
 
     public class StrategyParameterSettings

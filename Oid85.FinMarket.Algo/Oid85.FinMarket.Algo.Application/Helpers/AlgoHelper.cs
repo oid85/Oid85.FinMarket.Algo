@@ -14,7 +14,7 @@ public class AlgoHelper(
     /// <summary>
     /// Получить стратегии
     /// </summary>
-    public Dictionary<string, Strategy> GetStrategies()
+    public Dictionary<string, Strategy> GetStrategyData()
     {
         var algoSettings = options.Value;
 
@@ -36,7 +36,7 @@ public class AlgoHelper(
     /// <summary>
     /// Получение свечей
     /// </summary>
-    public async Task<Dictionary<string, List<Candle>>> GetCandlesAsync(bool isOptimization, List<string> tickers)
+    public async Task<Dictionary<string, List<Candle>>> GetCandleDataAsync(bool isOptimization, List<string> tickers)
     {
         var dateRange = isOptimization ? GetOptimizationDates() : GetBacktestDates();
 

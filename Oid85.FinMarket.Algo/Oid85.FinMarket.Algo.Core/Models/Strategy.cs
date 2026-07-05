@@ -1,4 +1,6 @@
-﻿namespace Oid85.FinMarket.Algo.Core.Models;
+﻿using System.Collections.Concurrent;
+
+namespace Oid85.FinMarket.Algo.Core.Models;
 
 public class Strategy
 {
@@ -22,9 +24,9 @@ public class Strategy
 
     public int StabilizationPeriod { get; set; } = 1;
     
-    public AlgoDataContext AlgoDataContext { get; set; } = new();
+    public Dictionary<string, List<Candle>> CandleData { get; set; } = [];
 
-    public List<Candle> Candles => AlgoDataContext.CandleData[Ticker];
+    public List<Candle> Candles => CandleData[Ticker];
 
     public List<double> OpenPrices => [.. Candles.Select(x => x.Open)];
     
@@ -282,8 +284,7 @@ public class Strategy
     public void InitForParameterSet(
         Dictionary<string, int> parameterSet, 
         int stabilizationPeriod, 
-        double startMoney, 
-        double endMoney)
+        double money)
     {
         Parameters = parameterSet;
         StopLimits.Clear();
@@ -291,8 +292,8 @@ public class Strategy
         EqiutyCurve.Clear();
         DrawdownCurve.Clear();
         StabilizationPeriod = stabilizationPeriod;
-        StartMoney = startMoney;
-        EndMoney = endMoney;
+        StartMoney = money;
+        EndMoney = money;
 
         DiagramPoints.Clear();
         for (int i = 0; i < Candles.Count; i++)

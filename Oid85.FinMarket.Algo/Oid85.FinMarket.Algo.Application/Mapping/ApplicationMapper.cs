@@ -1,4 +1,6 @@
-﻿using Oid85.FinMarket.Algo.Core.Models;
+﻿using System.Text.Json;
+using Oid85.FinMarket.Algo.Common.Utils;
+using Oid85.FinMarket.Algo.Core.Models;
 using Skender.Stock.Indicators;
 
 namespace Oid85.FinMarket.Algo.Application.Mapping;
@@ -14,4 +16,40 @@ public static class ApplicationMapper
             Low = Convert.ToDecimal(model.Low),
             Date = model.Date.ToDateTime(TimeOnly.MinValue)
         };
+
+    public static StrategyExecuteResult MapToStrategyExecuteResult(Strategy strategy, string portfolioName)
+    {
+        var json = JsonSerializer.Serialize(strategy.Parameters);
+
+        var result = new StrategyExecuteResult
+        {
+            StartDate = strategy.StartDate,
+            EndDate = strategy.EndDate,
+            Ticker = strategy.Ticker,
+            StrategyDescription = strategy.StrategyDescription,
+            PortfolioName = portfolioName,
+            StrategyName = strategy.StrategyName,
+            StrategyParams = json,
+            StrategyParamsHash = StringUtils.GetMd5(json),
+            NumberPositions = strategy.NumberPositions,
+            CurrentPosition = strategy.CurrentPosition,
+            CurrentPositionCost = strategy.CurrentPositionCost,
+            ProfitFactor = strategy.ProfitFactor,
+            RecoveryFactor = strategy.RecoveryFactor,
+            NetProfit = strategy.NetProfit,
+            AverageProfit = strategy.AverageNetProfit,
+            AverageProfitPercent = strategy.AverageNetProfitPercent,
+            Drawdown = strategy.Drawdown,
+            MaxDrawdown = strategy.MaxDrawdown,
+            MaxDrawdownPercent = strategy.MaxDrawdownPercent,
+            WinningPositions = strategy.WinningPositions,
+            WinningTradesPercent = strategy.WinningTradesPercent,
+            StartMoney = strategy.StartMoney,
+            EndMoney = strategy.EndMoney,
+            TotalReturn = strategy.TotalReturn,
+            AnnualYieldReturn = strategy.AnnualYieldReturn
+        };
+
+        return result;
+    }
 }

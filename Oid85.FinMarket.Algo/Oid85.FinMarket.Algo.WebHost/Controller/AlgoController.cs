@@ -19,26 +19,26 @@ public class AlgoController(
     /// <summary>
     /// Бэктест
     /// </summary>
-    [HttpPost("strategy/backtest")]
-    [ProducesResponseType(typeof(BaseResponse<StrategyBacktestResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<StrategyBacktestResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<StrategyBacktestResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> StrategyBacktestAsync(
-        [FromBody] StrategyBacktestRequest request) =>
+    [HttpPost("portfolio/backtest")]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioBacktestResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioBacktestResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioBacktestResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> PortfolioBacktestAsync(
+        [FromBody] PortfolioBacktestRequest request) =>
         GetResponseAsync(
-            () => algoService.StrategyBacktestAsync(request),
-            result => new BaseResponse<StrategyBacktestResponse> { Result = result });
+            () => algoService.PortfolioBacktestAsync(request),
+            result => new BaseResponse<PortfolioBacktestResponse> { Result = result });
 
     /// <summary>
     /// Оптимизация
     /// </summary>
-    [HttpPost("strategy/optimization")]
-    [ProducesResponseType(typeof(BaseResponse<StrategyOptimizationResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<StrategyOptimizationResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<StrategyOptimizationResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> StrategyOptimizationAsync(
-        [FromBody] StrategyOptimizationRequest request) =>
+    [HttpPost("portfolio/optimization")]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioOptimizationResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioOptimizationResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioOptimizationResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> PortfolioOptimizationAsync(
+        [FromBody] PortfolioOptimizationRequest request) =>
         GetResponseAsync(
-            () => algoService.StrategyOptimizationAsync(request),
-            result => new BaseResponse<StrategyOptimizationResponse> { Result = result });
+            () => algoService.PortfolioOptimizationAsync(request),
+            result => new BaseResponse<PortfolioOptimizationResponse> { Result = result });
 }

@@ -3,7 +3,7 @@
 namespace Oid85.FinMarket.Algo.Infrastructure.Database.Entities;
 
 public class StrategyExecuteResultEntity : BaseEntity
-{    
+{
     /// <summary>
     /// Начало периода
     /// </summary>
@@ -18,7 +18,12 @@ public class StrategyExecuteResultEntity : BaseEntity
     /// Тикер инструмента
     /// </summary>
     public string Ticker { get; set; }
-    
+
+    /// <summary>
+    /// Наименование портфеля
+    /// </summary>
+    public string PortfolioName { get; set; }
+
     /// <summary>
     /// Описание стратегии
     /// </summary>
