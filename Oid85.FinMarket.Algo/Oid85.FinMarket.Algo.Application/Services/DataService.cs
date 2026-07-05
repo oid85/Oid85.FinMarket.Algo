@@ -16,11 +16,8 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             _candleData = [];
 
-            foreach (var ticker in tickers)
-            {
-                var candles = await GetCandlesByTickerAsync(ticker);
-                _candleData.Add(ticker, candles);
-            }
+            foreach (var ticker in tickers) 
+                _candleData.Add(ticker, await GetCandlesByTickerAsync(ticker));
 
             return _candleData;
         }
