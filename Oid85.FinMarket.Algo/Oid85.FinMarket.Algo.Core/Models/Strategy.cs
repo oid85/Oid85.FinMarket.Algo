@@ -16,6 +16,10 @@ public class Strategy
     
     public string StrategyName { get; set; } = string.Empty;
 
+    public string PortfolioName { get; set; } = string.Empty;
+
+    public string ProcessName { get; set; } = string.Empty;
+
     public DateOnly StartDate => Candles.First().Date;
     
     public DateOnly EndDate => Candles.Last().Date;
@@ -165,16 +169,16 @@ public class Strategy
             if (Positions[count - 1].IsShort)
                 profit = Math.Abs(Positions[count - 1].Quantity) * (Positions[count - 1].EntryPrice - Positions[count - 1].ExitPrice);            
             
-            Positions[count - 1].Profit = profit;
-            Positions[count - 1].ProfitPercent = profit / EndMoney * 100.0;
+            Positions[count - 1].NetProfit = profit;
+            Positions[count - 1].NetProfitPercent = profit / EndMoney * 100.0;
             
-            var totalProfit = Positions.Sum(x => x.Profit);
-            Positions[count - 1].TotalProfit = totalProfit;
+            var totalProfit = Positions.Sum(x => x.NetProfit);
+            Positions[count - 1].TotalNetProfit = totalProfit;
             Positions[count - 1].TotalProfitPct = totalProfit / EndMoney * 100.0;
             
             EndMoney += profit;
             
-            EqiutyCurve.TryAdd(Positions[count - 1].ExitDate, Positions[count - 1].TotalProfit);
+            EqiutyCurve.TryAdd(Positions[count - 1].ExitDate, Positions[count - 1].TotalNetProfit);
             
             double drawdown;
             
@@ -183,11 +187,11 @@ public class Strategy
 
             else
             {
-                var maxTotalProfit = Positions.Take(count - 1).Max(x => x.TotalProfit);
+                var maxTotalProfit = Positions.Take(count - 1).Max(x => x.TotalNetProfit);
 
-                drawdown = Positions[count - 1].TotalProfit >= maxTotalProfit
+                drawdown = Positions[count - 1].TotalNetProfit >= maxTotalProfit
                     ? 0.0
-                    : maxTotalProfit - Positions[count - 1].TotalProfit;
+                    : maxTotalProfit - Positions[count - 1].TotalNetProfit;
             }
             
             DrawdownCurve.TryAdd(Positions[count - 1].ExitDate, drawdown);
@@ -242,25 +246,26 @@ public class Strategy
     {
         get
         {
-            double profits = Positions.Where(x => x.Profit > 0.0).Sum(x => x.Profit);
-            double losses = Positions.Where(x => x.Profit < 0.0).Sum(x => x.Profit);
+            if (Positions is []) return 0.0;
 
-            if (losses == 0.0)
-                return double.PositiveInfinity;
+            double profits = Positions.Where(x => x.NetProfit > 0.0).Sum(x => x.NetProfit);
+            double losses = Positions.Where(x => x.NetProfit < 0.0).Sum(x => x.NetProfit);
+
+            if (losses == 0.0) return double.PositiveInfinity;
             
             return profits / Math.Abs(losses);
         }
     }
 
-    public double RecoveryFactor => MaxDrawdown == 0.0 ? double.PositiveInfinity : NetProfit / MaxDrawdown;
+    public double RecoveryFactor => MaxDrawdown == 0.0 ? double.PositiveInfinity : TotalNetProfit / MaxDrawdown;
 
-    public double NetProfit => LastPosition?.TotalProfit ?? 0.0;
-    
-    public double AverageNetProfit => Positions.Count == 0 ? 0.0 : Positions.Select(x => x.Profit).Average();
+    public double TotalNetProfit => Positions.Count == 0 ? 0.0 : Positions.Sum(x => x.NetProfit);
 
-    public double AverageNetProfitPercent => Positions.Count == 0 ? 0.0 : Positions.Select(x => x.ProfitPercent).Average();
+    public double AverageNetProfit => Positions.Count == 0 ? 0.0 : Positions.Select(x => x.NetProfit).Average();
 
-    public double Drawdown  => LastPosition is null ? 0.0 : Positions.Max(x => x.TotalProfit) - LastPosition.TotalProfit;
+    public double AverageNetProfitPercent => Positions.Count == 0 ? 0.0 : Positions.Select(x => x.NetProfitPercent).Average();
+
+    public double Drawdown  => LastPosition is null ? 0.0 : Positions.Max(x => x.TotalNetProfit) - LastPosition.TotalNetProfit;
 
     public double MaxDrawdown  => DrawdownCurve.Count == 0 ? 0.0 : Math.Abs(DrawdownCurve.Max(x => x.Value));
 
@@ -268,7 +273,7 @@ public class Strategy
 
     public int NumberPositions => Positions.Count;
 
-    public int WinningPositions => Positions.Count == 0 ? 0 : Positions.Count(x => x.Profit > 0.0);
+    public int WinningPositions => Positions.Count == 0 ? 0 : Positions.Count(x => x.NetProfit > 0.0);
 
     public double WinningTradesPercent => NumberPositions == 0.0 ? 0.0 : Convert.ToDouble(WinningPositions) / Convert.ToDouble(NumberPositions) * 100.0;    
     
@@ -281,17 +286,13 @@ public class Strategy
 
     }
 
-    public void InitForParameterSet(
-        Dictionary<string, int> parameterSet, 
-        int stabilizationPeriod, 
-        double money)
+    public void InitForParameterSet(Dictionary<string, int> parameterSet, double money)
     {
         Parameters = parameterSet;
         StopLimits.Clear();
         Positions.Clear();
         EqiutyCurve.Clear();
         DrawdownCurve.Clear();
-        StabilizationPeriod = stabilizationPeriod;
         StartMoney = money;
         EndMoney = money;
 

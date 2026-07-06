@@ -17,7 +17,7 @@ public static class ApplicationMapper
             Date = model.Date.ToDateTime(TimeOnly.MinValue)
         };
 
-    public static StrategyExecuteResult MapToStrategyExecuteResult(Strategy strategy, string portfolioName)
+    public static StrategyExecuteResult MapToStrategyExecuteResult(Strategy strategy)
     {
         var json = JsonSerializer.Serialize(strategy.Parameters);
 
@@ -27,7 +27,8 @@ public static class ApplicationMapper
             EndDate = strategy.EndDate,
             Ticker = strategy.Ticker,
             StrategyDescription = strategy.StrategyDescription,
-            PortfolioName = portfolioName,
+            PortfolioName = strategy.PortfolioName,
+            ProcessName = strategy.ProcessName,
             StrategyName = strategy.StrategyName,
             StrategyParams = json,
             StrategyParamsHash = StringUtils.GetMd5(json),
@@ -36,9 +37,9 @@ public static class ApplicationMapper
             CurrentPositionCost = strategy.CurrentPositionCost,
             ProfitFactor = strategy.ProfitFactor,
             RecoveryFactor = strategy.RecoveryFactor,
-            NetProfit = strategy.NetProfit,
-            AverageProfit = strategy.AverageNetProfit,
-            AverageProfitPercent = strategy.AverageNetProfitPercent,
+            TotalNetProfit = strategy.TotalNetProfit,
+            AverageNetProfit = strategy.AverageNetProfit,
+            AverageNetProfitPercent = strategy.AverageNetProfitPercent,
             Drawdown = strategy.Drawdown,
             MaxDrawdown = strategy.MaxDrawdown,
             MaxDrawdownPercent = strategy.MaxDrawdownPercent,

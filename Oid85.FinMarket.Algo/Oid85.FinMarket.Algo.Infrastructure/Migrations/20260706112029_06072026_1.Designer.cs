@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Oid85.FinMarket.Algo.Infrastructure.Database;
@@ -11,9 +12,11 @@ using Oid85.FinMarket.Algo.Infrastructure.Database;
 namespace Oid85.FinMarket.Algo.Infrastructure.Migrations
 {
     [DbContext(typeof(AlgoContext))]
-    partial class AlgoContextModelSnapshot : ModelSnapshot
+    [Migration("20260706112029_06072026_1")]
+    partial class _06072026_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,10 +36,10 @@ namespace Oid85.FinMarket.Algo.Infrastructure.Migrations
                     b.Property<double>("AnnualYieldReturn")
                         .HasColumnType("double precision");
 
-                    b.Property<double>("AverageNetProfit")
+                    b.Property<double>("AverageProfit")
                         .HasColumnType("double precision");
 
-                    b.Property<double>("AverageNetProfitPercent")
+                    b.Property<double>("AverageProfitPercent")
                         .HasColumnType("double precision");
 
                     b.Property<int>("CurrentPosition")
@@ -60,6 +63,9 @@ namespace Oid85.FinMarket.Algo.Infrastructure.Migrations
                     b.Property<double>("MaxDrawdownPercent")
                         .HasColumnType("double precision");
 
+                    b.Property<double>("NetProfit")
+                        .HasColumnType("double precision");
+
                     b.Property<int>("NumberPositions")
                         .HasColumnType("integer");
 
@@ -76,10 +82,6 @@ namespace Oid85.FinMarket.Algo.Infrastructure.Migrations
 
                     b.Property<double>("RecoveryFactor")
                         .HasColumnType("double precision");
-
-                    b.Property<string>("ResultMessage")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
@@ -106,9 +108,6 @@ namespace Oid85.FinMarket.Algo.Infrastructure.Migrations
                     b.Property<string>("Ticker")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<double>("TotalNetProfit")
-                        .HasColumnType("double precision");
 
                     b.Property<double>("TotalReturn")
                         .HasColumnType("double precision");

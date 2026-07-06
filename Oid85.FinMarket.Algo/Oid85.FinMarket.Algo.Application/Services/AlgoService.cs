@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 using NLog;
 using Oid85.FinMarket.Algo.Application.Helpers;
+using Oid85.FinMarket.Algo.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Algo.Application.Interfaces.Services;
 using Oid85.FinMarket.Algo.Application.Mapping;
 using Oid85.FinMarket.Algo.Core.Configuration;
@@ -16,6 +17,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
     public class AlgoService(
         ILogger logger,
         IOptions<AlgoSettings> options,
+        IStrategyExecuteResultRepository strategyExecuteResultRepository,
         AlgoHelper algoHelper)
         : IAlgoService
     {
@@ -36,6 +38,8 @@ namespace Oid85.FinMarket.Algo.Application.Services
             var candleData = await algoHelper.GetCandleDataAsync(isOptimization: true, tickers);
             var strategyInstanceData = algoHelper.GetStrategyData();
 
+            await strategyExecuteResultRepository.DeleteAsync(portfolioSettings!.Name);
+
             foreach (var portfolioStrategySettings in portfolioSettings!.PortfolioStrategies)
             {
                 var strategySettings = algoSettings.Strategies.Find(x => x.Name == portfolioStrategySettings.Name);
@@ -48,6 +52,9 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     strategyInstance.Ticker = ticker;
                     strategyInstance.Leverage = portfolioSettings.Leverage;
                     strategyInstance.CandleData = candleData;
+                    strategyInstance.PortfolioName = portfolioSettings.Name;
+                    strategyInstance.StabilizationPeriod = algoSettings.BacktestSettings.StabilizationPeriodInCandles;
+                    strategyInstance.ProcessName = "Optimization";
 
                     if (strategyInstance.Candles is []) continue;
 
@@ -55,21 +62,32 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
                     foreach (var parameterSet in parameterSets)
                     {
+                        StrategyExecuteResult strategyExecuteResult;
+
                         try
                         {
                             if (parameterSet.Count == 0) continue;
 
-                            strategyInstance.InitForParameterSet(parameterSet, algoSettings.BacktestSettings.StabilizationPeriodInCandles + 1, portfolioSettings.Money);
+                            strategyInstance.InitForParameterSet(parameterSet, portfolioSettings.Money);                            
                             strategyInstance.Execute();
-                            strategyExecuteResults.Add(ApplicationMapper.MapToStrategyExecuteResult(strategyInstance, portfolioSettings.Name));
+                            strategyExecuteResult = ApplicationMapper.MapToStrategyExecuteResult(strategyInstance);
+                            strategyExecuteResult.ResultMessage = "Success";                            
                         }
 
                         catch (Exception exception)
                         {
                             logger.Info($"Оптимизация '{strategyInstance.Ticker}', '{strategyInstance.StrategyName}', '{JsonSerializer.Serialize(parameterSet)}'. {exception}");
+
+                            strategyExecuteResult = ApplicationMapper.MapToStrategyExecuteResult(strategyInstance);
+                            strategyExecuteResult.ResultMessage = $"Error. {exception.Message}";
                         }
+
+                        strategyExecuteResults.Add(strategyExecuteResult);
                     }
                 }
+
+                if (strategyExecuteResults is not [])
+                    await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
             }
 
             return new();

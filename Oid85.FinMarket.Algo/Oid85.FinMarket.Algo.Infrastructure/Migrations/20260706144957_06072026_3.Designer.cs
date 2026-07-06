@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Oid85.FinMarket.Algo.Infrastructure.Database;
@@ -11,9 +12,11 @@ using Oid85.FinMarket.Algo.Infrastructure.Database;
 namespace Oid85.FinMarket.Algo.Infrastructure.Migrations
 {
     [DbContext(typeof(AlgoContext))]
-    partial class AlgoContextModelSnapshot : ModelSnapshot
+    [Migration("20260706144957_06072026_3")]
+    partial class _06072026_3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,6 +61,9 @@ namespace Oid85.FinMarket.Algo.Infrastructure.Migrations
                         .HasColumnType("double precision");
 
                     b.Property<double>("MaxDrawdownPercent")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("NetProfit")
                         .HasColumnType("double precision");
 
                     b.Property<int>("NumberPositions")
@@ -106,9 +112,6 @@ namespace Oid85.FinMarket.Algo.Infrastructure.Migrations
                     b.Property<string>("Ticker")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<double>("TotalNetProfit")
-                        .HasColumnType("double precision");
 
                     b.Property<double>("TotalReturn")
                         .HasColumnType("double precision");

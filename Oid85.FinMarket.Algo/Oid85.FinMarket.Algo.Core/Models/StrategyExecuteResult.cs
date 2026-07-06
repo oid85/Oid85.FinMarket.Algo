@@ -28,6 +28,11 @@ public class StrategyExecuteResult
     public string PortfolioName { get; set; }
 
     /// <summary>
+    /// Наименование процесса
+    /// </summary>
+    public string ProcessName { get; set; }
+
+    /// <summary>
     /// Описание стратегии
     /// </summary>
     public string StrategyDescription { get; set; }
@@ -75,17 +80,17 @@ public class StrategyExecuteResult
     /// <summary>
     /// Net Profit
     /// </summary>
-    public double NetProfit { get; set; }
+    public double TotalNetProfit { get; set; }
 
     /// <summary>
     /// Average Profit
     /// </summary>
-    public double AverageProfit { get; set; }
+    public double AverageNetProfit { get; set; }
 
     /// <summary>
     /// Average Profit Percent
     /// </summary>
-    public double AverageProfitPercent { get; set; }
+    public double AverageNetProfitPercent { get; set; }
 
     /// <summary>
     /// Drawdown
@@ -131,4 +136,9 @@ public class StrategyExecuteResult
     /// Доходность годовая, %;
     /// </summary>
     public double AnnualYieldReturn { get; set; }
+
+    /// <summary>
+    /// Сообщение
+    /// </summary>
+    public string ResultMessage { get; set; }
 }
