@@ -25,6 +25,13 @@ namespace Oid85.FinMarket.Algo.Application.Services
         {
             request.PortfolioName = "PortfolioUltimateSmoother";
 
+            await strategyExecuteResultRepository.DeleteAsync(request.PortfolioName);
+
+            var strategyExecuteResults = await GetStrategyExecuteResultsAsync(request.PortfolioName, isOptimization: false);
+
+            if (strategyExecuteResults is not [])
+                await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
+
             return new();
         }
 
@@ -32,20 +39,37 @@ namespace Oid85.FinMarket.Algo.Application.Services
         {
             request.PortfolioName = "PortfolioUltimateSmoother";
 
-            var algoSettings = options.Value;
-            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == request.PortfolioName);
-            var tickers = algoSettings.TickerLists.Find(x => x.Name == portfolioSettings!.TickerList)!.Tickers;
-            var candleData = await algoHelper.GetCandleDataAsync(isOptimization: true, tickers);
-            var strategyInstanceData = algoHelper.GetStrategyData();
+            await strategyExecuteResultRepository.DeleteAsync(request.PortfolioName);
 
-            await strategyExecuteResultRepository.DeleteAsync(portfolioSettings!.Name);
+            var strategyExecuteResults = await GetStrategyExecuteResultsAsync(request.PortfolioName, isOptimization: true);
+
+            if (strategyExecuteResults is not [])
+                await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
+
+            return new();
+        }
+
+        public async Task<PortfolioSignalsResponse> PortfolioSignalsAsync(PortfolioSignalsRequest request)
+        {
+            request.PortfolioName = "PortfolioUltimateSmoother";
+
+            return new();
+        }
+
+        private async Task<List<StrategyExecuteResult>> GetStrategyExecuteResultsAsync(string portfolioName, bool isOptimization)
+        {
+            var strategyExecuteResults = new List<StrategyExecuteResult>();
+
+            var algoSettings = options.Value;
+            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == portfolioName);
+            var tickers = algoSettings.TickerLists.Find(x => x.Name == portfolioSettings!.TickerList)!.Tickers;
+            var candleData = await algoHelper.GetCandleDataAsync(isOptimization, tickers);
+            var strategyInstanceData = algoHelper.GetStrategyData();
 
             foreach (var portfolioStrategySettings in portfolioSettings!.PortfolioStrategies)
             {
                 var strategySettings = algoSettings.Strategies.Find(x => x.Name == portfolioStrategySettings.Name);
                 var strategyInstance = strategyInstanceData[portfolioStrategySettings.Name];
-
-                var strategyExecuteResults = new List<StrategyExecuteResult>();
 
                 foreach (var ticker in tickers)
                 {
@@ -54,11 +78,13 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     strategyInstance.CandleData = candleData;
                     strategyInstance.PortfolioName = portfolioSettings.Name;
                     strategyInstance.StabilizationPeriod = algoSettings.BacktestSettings.StabilizationPeriodInCandles;
-                    strategyInstance.ProcessName = "Optimization";
+                    strategyInstance.ProcessName = isOptimization ? "Optimization" : "Backtest";
 
                     if (strategyInstance.Candles is []) continue;
 
-                    var parameterSets = AlgoHelper.GetParameterSets(strategySettings!.StrategyParameters);
+                    var parameterSets = isOptimization
+                        ? AlgoHelper.GetParameterSets(strategySettings!.StrategyParameters)
+                        : await GetParameterSetsForBacktestAsync(portfolioSettings.Name, strategySettings!.Name, ticker);
 
                     foreach (var parameterSet in parameterSets)
                     {
@@ -68,10 +94,10 @@ namespace Oid85.FinMarket.Algo.Application.Services
                         {
                             if (parameterSet.Count == 0) continue;
 
-                            strategyInstance.InitForParameterSet(parameterSet, portfolioSettings.Money);                            
+                            strategyInstance.InitForParameterSet(parameterSet, portfolioSettings.Money);
                             strategyInstance.Execute();
                             strategyExecuteResult = ApplicationMapper.MapToStrategyExecuteResult(strategyInstance);
-                            strategyExecuteResult.ResultMessage = "Success";                            
+                            strategyExecuteResult.ResultMessage = "Success";
                         }
 
                         catch (Exception exception)
@@ -85,12 +111,27 @@ namespace Oid85.FinMarket.Algo.Application.Services
                         strategyExecuteResults.Add(strategyExecuteResult);
                     }
                 }
-
-                if (strategyExecuteResults is not [])
-                    await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
             }
 
-            return new();
+            return strategyExecuteResults;
+        }
+
+        private async Task<List<Dictionary<string, int>>> GetParameterSetsForBacktestAsync(string portfolioName, string strategyName, string ticker)
+        {
+            var strategyExecuteResults = (await strategyExecuteResultRepository.GetAsync())
+                .Where(x => x.PortfolioName == portfolioName)
+                .Where(x => x.StrategyName == strategyName)
+                .Where(x => x.Ticker == ticker)
+                .ToList();
+
+            if (strategyExecuteResults is [])
+                return [];
+
+            var parameterSets = strategyExecuteResults                
+                .Select(x => JsonSerializer.Deserialize<Dictionary<string, int>>(x.StrategyParams))
+                .ToList();
+
+            return parameterSets;
         }
     }
 }

@@ -41,4 +41,17 @@ public class AlgoController(
         GetResponseAsync(
             () => algoService.PortfolioOptimizationAsync(request),
             result => new BaseResponse<PortfolioOptimizationResponse> { Result = result });
+
+    /// <summary>
+    /// Сигналы
+    /// </summary>
+    [HttpPost("portfolio/signals")]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioSignalsResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioSignalsResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<PortfolioSignalsResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> PortfolioSignalsAsync(
+        [FromBody] PortfolioSignalsRequest request) =>
+        GetResponseAsync(
+            () => algoService.PortfolioSignalsAsync(request),
+            result => new BaseResponse<PortfolioSignalsResponse> { Result = result });
 }

@@ -7,5 +7,6 @@ namespace Oid85.FinMarket.Algo.Application.Interfaces.Services
     {
         Task<PortfolioBacktestResponse> PortfolioBacktestAsync(PortfolioBacktestRequest request);
         Task<PortfolioOptimizationResponse> PortfolioOptimizationAsync(PortfolioOptimizationRequest request);
+        Task<PortfolioSignalsResponse> PortfolioSignalsAsync(PortfolioSignalsRequest request);
     }
 }
