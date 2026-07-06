@@ -27,10 +27,15 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             await strategyExecuteResultRepository.DeleteAsync(request.PortfolioName);
 
-            var strategyExecuteResults = await GetStrategyExecuteResultsAsync(request.PortfolioName, isOptimization: false);
+            var strategyExecuteResults = await GetStrategyExecuteResultsAsync(
+                new()
+                {
+                    PortfolioName = request.PortfolioName,
+                    IsOptimization = false,
+                    ProcessName = "Backtest"
+                });
 
-            if (strategyExecuteResults is not [])
-                await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
+            await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
 
             return new();
         }
@@ -41,10 +46,15 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             await strategyExecuteResultRepository.DeleteAsync(request.PortfolioName);
 
-            var strategyExecuteResults = await GetStrategyExecuteResultsAsync(request.PortfolioName, isOptimization: true);
+            var strategyExecuteResults = await GetStrategyExecuteResultsAsync(
+                new()
+                {
+                    PortfolioName = request.PortfolioName,
+                    IsOptimization = true,
+                    ProcessName = "Optimization"
+                });
 
-            if (strategyExecuteResults is not [])
-                await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
+            await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
 
             return new();
         }
@@ -56,14 +66,14 @@ namespace Oid85.FinMarket.Algo.Application.Services
             return new();
         }
 
-        private async Task<List<StrategyExecuteResult>> GetStrategyExecuteResultsAsync(string portfolioName, bool isOptimization)
+        private async Task<List<StrategyExecuteResult>> GetStrategyExecuteResultsAsync(StrategyExecuteRequest request)
         {
             var strategyExecuteResults = new List<StrategyExecuteResult>();
 
             var algoSettings = options.Value;
-            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == portfolioName);
+            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == request.PortfolioName);
             var tickers = algoSettings.TickerLists.Find(x => x.Name == portfolioSettings!.TickerList)!.Tickers;
-            var candleData = await algoHelper.GetCandleDataAsync(isOptimization, tickers);
+            var candleData = await algoHelper.GetCandleDataAsync(request.IsOptimization, tickers);
             var strategyInstanceData = algoHelper.GetStrategyData();
 
             foreach (var portfolioStrategySettings in portfolioSettings!.PortfolioStrategies)
@@ -78,11 +88,11 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     strategyInstance.CandleData = candleData;
                     strategyInstance.PortfolioName = portfolioSettings.Name;
                     strategyInstance.StabilizationPeriod = algoSettings.BacktestSettings.StabilizationPeriodInCandles;
-                    strategyInstance.ProcessName = isOptimization ? "Optimization" : "Backtest";
+                    strategyInstance.ProcessName = request.ProcessName;
 
                     if (strategyInstance.Candles is []) continue;
 
-                    var parameterSets = isOptimization
+                    var parameterSets = request.IsOptimization
                         ? AlgoHelper.GetParameterSets(strategySettings!.StrategyParameters)
                         : await GetParameterSetsForBacktestAsync(portfolioSettings.Name, strategySettings!.Name, ticker);
 

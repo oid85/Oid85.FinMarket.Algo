@@ -148,5 +148,10 @@ public class AlgoHelper(
         }
 
         throw new Exception("Количество параметров больше 3. Оптимизация выполняться не будет");
-    }         
+    }
+
+    internal async Task<Dictionary<string, List<Candle>>> GetCandleDataAsync(object isOptimization, List<string> tickers)
+    {
+        throw new NotImplementedException();
+    }
 }
