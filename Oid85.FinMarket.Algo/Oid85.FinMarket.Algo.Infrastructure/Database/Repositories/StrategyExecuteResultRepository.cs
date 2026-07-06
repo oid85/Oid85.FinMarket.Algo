@@ -28,14 +28,19 @@ namespace Oid85.FinMarket.Algo.Infrastructure.Database.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(string portfolioName)
+        public async Task DeleteAsync(string portfolioName, string processName)
         {
             await using var context = await contextFactory.CreateDbContextAsync();
-            await context.StrategyExecuteResultEntities.Where(x => x.PortfolioName == portfolioName).ExecuteDeleteAsync();
+
+            await context.StrategyExecuteResultEntities
+                .Where(x => x.PortfolioName == portfolioName)
+                .Where(x => x.ProcessName == processName)
+                .ExecuteDeleteAsync();
+
             await context.SaveChangesAsync();
         }
 
-        public async Task<List<StrategyExecuteResult>> GetAsync()
+        public async Task<List<StrategyExecuteResult>> GetFilteredAsync()
         {
             var algoSettings = options.Value;
 
@@ -74,7 +79,7 @@ namespace Oid85.FinMarket.Algo.Infrastructure.Database.Repositories
                 CurrentPositionCost = entity.CurrentPositionCost,
                 ProfitFactor = entity.ProfitFactor,
                 RecoveryFactor = entity.RecoveryFactor,
-                TotalNetProfit = entity.TotalNetProfit,
+                TotalNetProfit = entity.NetProfit,
                 AverageNetProfit = entity.AverageNetProfit,
                 AverageNetProfitPercent = entity.AverageNetProfitPercent,
                 Drawdown = entity.Drawdown,
@@ -106,7 +111,7 @@ namespace Oid85.FinMarket.Algo.Infrastructure.Database.Repositories
                 CurrentPositionCost = model.CurrentPositionCost,
                 ProfitFactor = model.ProfitFactor,
                 RecoveryFactor = model.RecoveryFactor,
-                TotalNetProfit = model.TotalNetProfit,
+                NetProfit = model.TotalNetProfit,
                 AverageNetProfit = model.AverageNetProfit,
                 AverageNetProfitPercent = model.AverageNetProfitPercent,
                 Drawdown = model.Drawdown,

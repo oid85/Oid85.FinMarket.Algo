@@ -77,7 +77,7 @@ public class StrategyExecuteResultEntity : BaseEntity
     /// <summary>
     /// Net Profit
     /// </summary>
-    public double TotalNetProfit { get; set; }
+    public double NetProfit { get; set; }
     
     /// <summary>
     /// Average Profit
