@@ -156,4 +156,9 @@ public class StrategyExecuteResult
     /// Просадка
     /// </summary>
     public Dictionary<DateOnly, double> DrawdownCurve { get; set; } = [];
+
+    /// <summary>
+    /// График
+    /// </summary>
+    public List<DiagramPoint> DiagramPoints { get; set; } = [];
 }

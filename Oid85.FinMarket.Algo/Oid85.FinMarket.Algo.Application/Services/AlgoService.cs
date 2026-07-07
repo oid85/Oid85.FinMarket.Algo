@@ -7,6 +7,7 @@ using Oid85.FinMarket.Algo.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Algo.Application.Interfaces.Services;
 using Oid85.FinMarket.Algo.Application.Mapping;
 using Oid85.FinMarket.Algo.Common.KnownConstants;
+using Oid85.FinMarket.Algo.Common.Utils;
 using Oid85.FinMarket.Algo.Core.Configuration;
 using Oid85.FinMarket.Algo.Core.Models;
 using Oid85.FinMarket.Algo.Core.Requests;
@@ -84,8 +85,42 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     IsOptimization = false,
                     ProcessName = KnownProcessNames.Backtest
                 });
+            
+            var from = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * 30));
+            var to = DateOnly.FromDateTime(DateTime.Today);
+            var dates = DateUtils.GetDates(from, to);
 
-            return new();
+            var response = new EmulateResponse { Dates = dates };
+
+            foreach (var strategyExecuteResult in strategyExecuteResults)
+            {
+                var positionList = new PositionList 
+                {
+                    Ticker = strategyExecuteResult.Ticker,
+                    PositionListItems = dates
+                    .Select(x => new PositionListItem
+                    { 
+                        Date = x,                         
+                        PositionType = GetPositionType(strategyExecuteResult.DiagramPoints, x)
+                    }).ToList()                    
+                };
+
+                response.PositionLists.Add(positionList);
+            }
+
+            return response;
+
+            string? GetPositionType(List<DiagramPoint> diagramPoints, DateOnly date)
+            {
+                var diagramPoint = diagramPoints.Find(x => x.Date == date);
+
+                if (diagramPoint is null) return null;
+
+                if (diagramPoint.PositionDirection == 1) return "Long";
+                if (diagramPoint.PositionDirection == -1) return "Short";
+
+                return null;
+            }
         }
 
         /// <summary>

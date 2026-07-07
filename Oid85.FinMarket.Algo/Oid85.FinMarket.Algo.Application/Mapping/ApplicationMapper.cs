@@ -51,7 +51,8 @@ public static class ApplicationMapper
             AnnualYieldReturn = strategy.AnnualYieldReturn,
             Positions = strategy.Positions,
             EqiutyCurve = strategy.EqiutyCurve,
-            DrawdownCurve = strategy.DrawdownCurve
+            DrawdownCurve = strategy.DrawdownCurve,
+            DiagramPoints = strategy.DiagramPoints
         };
 
         return result;

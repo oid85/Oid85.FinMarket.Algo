@@ -51,8 +51,16 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
                         SellAtPrice(positionSize, orderPrice, i + 1);
                 }
                 
-                // Отрисовка индикаторов
+                // Отрисовка
                 DiagramPoints[i].Indicator = us[i];
+                DiagramPoints[i].Price = Candles[i].Close;
+
+                if (LastActivePosition is not null)
+                    if (LastActivePosition.IsActive)
+                    {
+                        if (LastActivePosition.IsLong) DiagramPoints[i].PositionDirection = 1;
+                        if (LastActivePosition.IsShort) DiagramPoints[i].PositionDirection = -1;
+                    }
             }
         }
     }
