@@ -286,7 +286,7 @@ public class Strategy
 
     }
 
-    public void InitForParameterSet(Dictionary<string, int> parameterSet, double money)
+    public void Init(Dictionary<string, int> parameterSet, double money)
     {
         Parameters = parameterSet;
         StopLimits.Clear();

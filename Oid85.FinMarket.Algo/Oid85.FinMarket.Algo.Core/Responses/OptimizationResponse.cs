@@ -1,6 +1,6 @@
 ﻿namespace Oid85.FinMarket.Algo.Core.Responses
 {
-    public class PortfolioSignalsResponse
+    public class OptimizationResponse
     {
     }
 }

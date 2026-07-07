@@ -78,12 +78,12 @@ public class StrategyExecuteResult
     public double RecoveryFactor { get; set; }
 
     /// <summary>
-    /// Net Profit
+    /// Total Net Profit
     /// </summary>
     public double TotalNetProfit { get; set; }
 
     /// <summary>
-    /// Average Profit
+    /// Average Net Profit
     /// </summary>
     public double AverageNetProfit { get; set; }
 
@@ -141,4 +141,19 @@ public class StrategyExecuteResult
     /// Сообщение
     /// </summary>
     public string ResultMessage { get; set; }
+
+    /// <summary>
+    /// Позиции
+    /// </summary>
+    public List<Position> Positions { get; set; } = [];
+
+    /// <summary>
+    /// Капитал
+    /// </summary>
+    public Dictionary<DateOnly, double> EqiutyCurve { get; set; } = [];
+
+    /// <summary>
+    /// Просадка
+    /// </summary>
+    public Dictionary<DateOnly, double> DrawdownCurve { get; set; } = [];
 }

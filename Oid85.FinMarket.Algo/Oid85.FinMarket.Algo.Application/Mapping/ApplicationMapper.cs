@@ -48,7 +48,10 @@ public static class ApplicationMapper
             StartMoney = strategy.StartMoney,
             EndMoney = strategy.EndMoney,
             TotalReturn = strategy.TotalReturn,
-            AnnualYieldReturn = strategy.AnnualYieldReturn
+            AnnualYieldReturn = strategy.AnnualYieldReturn,
+            Positions = strategy.Positions,
+            EqiutyCurve = strategy.EqiutyCurve,
+            DrawdownCurve = strategy.DrawdownCurve
         };
 
         return result;
