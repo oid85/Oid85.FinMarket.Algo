@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NLog;
@@ -108,7 +109,6 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 foreach (var ticker in tickers)
                 {
                     strategy.Ticker = ticker;
-                    strategy.Leverage = portfolioSettings.Leverage;
                     strategy.CandleData = candleData;
                     strategy.PortfolioName = portfolioSettings.Name;
                     strategy.StabilizationPeriod = algoSettings.BacktestSettings.StabilizationPeriodInCandles;
@@ -120,34 +120,60 @@ namespace Oid85.FinMarket.Algo.Application.Services
                         ? GetParameterSets(strategySettings!.StrategyParameters)
                         : await GetParameterSets(portfolioSettings.Name, strategySettings!.Name, ticker);
 
-                    foreach (var parameterSet in parameterSets)
-                    {
-                        StrategyExecuteResult strategyExecuteResult;
+                    var results = Execute(strategy, parameterSets);
 
-                        try
-                        {
-                            if (parameterSet.Count == 0) continue;
-
-                            strategy.Init(parameterSet, portfolioSettings.Money);
-                            strategy.Execute();
-                            strategyExecuteResult = ApplicationMapper.MapToStrategyExecuteResult(strategy);
-                            strategyExecuteResult.ResultMessage = "Success";
-                        }
-
-                        catch (Exception exception)
-                        {
-                            logger.Info($"Оптимизация '{strategy.Ticker}', '{strategy.StrategyName}', '{JsonSerializer.Serialize(parameterSet)}'. {exception}");
-
-                            strategyExecuteResult = ApplicationMapper.MapToStrategyExecuteResult(strategy);
-                            strategyExecuteResult.ResultMessage = $"Error. {exception.Message}";
-                        }
-
-                        strategyExecuteResults.Add(strategyExecuteResult);
-                    }
+                    strategyExecuteResults.AddRange(results);
                 }
             }
 
             return strategyExecuteResults;
+        }
+
+        /// <summary>
+        /// Выполнить стратегию на наборах параметров
+        /// </summary>
+        private List<StrategyExecuteResult> Execute(Strategy strategy, List<Dictionary<string, int>> parameterSets)
+        {
+            var results = new List<StrategyExecuteResult>();
+
+            foreach (var parameterSet in parameterSets)
+            {
+                var result = Execute(strategy, parameterSet);
+
+                if (result is not null)
+                    results.Add(result);
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Выполнить стратегию на наборе параметров
+        /// </summary>
+        private StrategyExecuteResult? Execute(Strategy strategy, Dictionary<string, int> parameterSet)
+        {
+            var algoSettings = options.Value;
+            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == strategy.PortfolioName);
+
+            StrategyExecuteResult result;
+
+            try
+            {
+                if (parameterSet.Count == 0) return null;
+
+                strategy.Init(parameterSet, portfolioSettings!.Money);
+                strategy.Execute();
+                result = ApplicationMapper.MapToStrategyExecuteResult(strategy);
+                result.ResultMessage = "Success";
+            }
+
+            catch (Exception exception)
+            {
+                result = ApplicationMapper.MapToStrategyExecuteResult(strategy);
+                result.ResultMessage = $"Error. {exception.Message}";
+            }
+
+            return result;
         }
 
         /// <summary>

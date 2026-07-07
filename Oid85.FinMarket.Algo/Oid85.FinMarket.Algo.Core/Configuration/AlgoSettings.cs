@@ -32,7 +32,6 @@
         public string Name { get; set; }
         public string Description { get; set; }
         public double Money { get; set; }
-        public double Leverage { get; set; }
         public string TickerList { get; set; }
         public List<PortfolioStrategySettings> PortfolioStrategies { get; set; }
     }

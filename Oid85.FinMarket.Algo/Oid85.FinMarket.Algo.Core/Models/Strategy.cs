@@ -8,9 +8,7 @@ public class Strategy
 
     public double EndMoney { get; set; }
     
-    public string Ticker { get; set; } = string.Empty;
-    
-    public double Leverage { get; set; } = 1.0;   
+    public string Ticker { get; set; } = string.Empty;    
     
     public string StrategyDescription { get; set; } = string.Empty;
     
@@ -63,7 +61,7 @@ public class Strategy
         if (EndMoney <= orderPrice)
             return 0;
 
-        return orderPrice == 0.0 ? 0 : Convert.ToInt32(EndMoney / orderPrice * Leverage);        
+        return orderPrice == 0.0 ? 0 : Convert.ToInt32(EndMoney / orderPrice);        
     }
 
     public Position? LastActivePosition {
