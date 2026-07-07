@@ -113,7 +113,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
             string? GetPositionType(List<DiagramPoint> diagramPoints, DateOnly date)
             {
                 var diagramPoint = diagramPoints.Find(x => x.Date == date);
-
+                
                 if (diagramPoint is null) return null;
 
                 if (diagramPoint.PositionDirection == 1) return "Long";
