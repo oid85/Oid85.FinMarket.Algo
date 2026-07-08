@@ -43,15 +43,15 @@ public class AlgoController(
             result => new BaseResponse<OptimizationResponse> { Result = result });
 
     /// <summary>
-    /// Эмуляция портфеля
+    /// Мониторинг
     /// </summary>
-    [HttpPost("portfolio/emulate")]
-    [ProducesResponseType(typeof(BaseResponse<EmulateResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<EmulateResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<EmulateResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> EmulateAsync(
-        [FromBody] EmulateRequest request) =>
+    [HttpPost("portfolio/monitor")]
+    [ProducesResponseType(typeof(BaseResponse<MonitorResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<MonitorResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<MonitorResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> MonitorAsync(
+        [FromBody] MonitorRequest request) =>
         GetResponseAsync(
-            () => algoService.EmulateAsync(request),
-            result => new BaseResponse<EmulateResponse> { Result = result });
+            () => algoService.MonitorAsync(request),
+            result => new BaseResponse<MonitorResponse> { Result = result });
 }

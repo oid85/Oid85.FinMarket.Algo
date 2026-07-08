@@ -7,6 +7,6 @@ namespace Oid85.FinMarket.Algo.Application.Interfaces.Services
     {
         Task<BacktestResponse> BacktestAsync(BacktestRequest request);
         Task<OptimizationResponse> OptimizationAsync(OptimizationRequest request);
-        Task<EmulateResponse> EmulateAsync(EmulateRequest request);
+        Task<MonitorResponse> MonitorAsync(MonitorRequest request);
     }
 }

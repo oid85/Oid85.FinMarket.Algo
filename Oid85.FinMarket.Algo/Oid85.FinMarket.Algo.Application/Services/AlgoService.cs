@@ -72,9 +72,9 @@ namespace Oid85.FinMarket.Algo.Application.Services
         }
 
         /// <summary>
-        /// Эмуляция проторговки портфеля стратегий
+        /// Мониторинг стратегий
         /// </summary>
-        public async Task<EmulateResponse> EmulateAsync(EmulateRequest request)
+        public async Task<MonitorResponse> MonitorAsync(MonitorRequest request)
         {
             request.PortfolioName = "PortfolioUltimateSmoother";
 
@@ -90,7 +90,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
             var to = DateOnly.FromDateTime(DateTime.Today);
             var dates = DateUtils.GetDates(from, to);
 
-            var response = new EmulateResponse { Dates = dates };
+            var response = new MonitorResponse { Dates = dates };
 
             foreach (var strategyExecuteResult in strategyExecuteResults)
             {

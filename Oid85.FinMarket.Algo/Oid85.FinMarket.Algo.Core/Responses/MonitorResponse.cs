@@ -1,6 +1,6 @@
 ﻿namespace Oid85.FinMarket.Algo.Core.Responses
 {
-    public class EmulateResponse
+    public class MonitorResponse
     {
         public List<DateOnly> Dates { get; set; } = [];
         public List<PositionList> PositionLists { get; set; } = [];
