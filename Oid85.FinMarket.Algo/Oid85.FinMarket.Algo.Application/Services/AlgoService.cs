@@ -98,10 +98,25 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 {
                     Ticker = strategyExecuteResult.Ticker,
                     PositionListItems = dates
-                    .Select(x => new PositionListItem
-                    { 
-                        Date = x,                         
-                        PositionType = GetPositionType(strategyExecuteResult.DiagramPoints, x)
+                    .Select(x =>
+                    {
+                        var positionType = GetPositionType(strategyExecuteResult.DiagramPoints, x);
+
+                        var colorFill = positionType switch
+                        {
+                            KnownPositionTypes.Long => KnownColors.Green,
+                            KnownPositionTypes.Short => KnownColors.Red,
+                            _ => KnownColors.White
+                        };
+
+                        var positionListItem = new PositionListItem
+                        {
+                            Date = x,
+                            PositionType = positionType,
+                            ColorFill = colorFill
+                        };
+                        
+                        return positionListItem;
                     }).ToList()                    
                 };
 
@@ -116,10 +131,14 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 
                 if (diagramPoint is null) return null;
 
-                if (diagramPoint.PositionDirection == 1) return "Long";
-                if (diagramPoint.PositionDirection == -1) return "Short";
+                var positionType = diagramPoint.PositionDirection switch
+                {
+                    1 => KnownPositionTypes.Long,
+                    -1 => KnownPositionTypes.Short,
+                    _ => null
+                };
 
-                return null;
+                return positionType;
             }
         }
 
