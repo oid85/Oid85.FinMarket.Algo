@@ -139,7 +139,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             return new PortfolioListResponse
             {
-                Items = [.. algoSettings.Portfolios.Select(x => new PortfolioListItem { Name = x.Name })]
+                Items = [.. algoSettings.Portfolios.Select(x => new PortfolioListItem { Name = x.Name, Description = x.Description })]
             };
         }
 
