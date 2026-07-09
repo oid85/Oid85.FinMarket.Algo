@@ -16,7 +16,6 @@
     public class PositionListItem
     {
         public DateOnly Date { get; set; }
-        public string? PositionType { get; set; } = null;
         public string ColorFill { get; set; } = "#FFFFFF";
     }
 

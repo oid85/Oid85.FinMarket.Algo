@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using NLog;
 using Oid85.FinMarket.Algo.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Algo.Application.Interfaces.Services;
 using Oid85.FinMarket.Algo.Application.Mapping;
@@ -16,16 +14,13 @@ using Oid85.FinMarket.Algo.Core.Responses;
 namespace Oid85.FinMarket.Algo.Application.Services
 {
     public class AlgoService(
-        ILogger logger,
         IDataService dataService,
         IOptions<AlgoSettings> options,
         IStrategyExecuteResultRepository strategyExecuteResultRepository,
         IServiceProvider serviceProvider)
         : IAlgoService
     {
-        /// <summary>
-        /// Бэктест стратегий портфеля
-        /// </summary>
+        /// <inheritdoc />
         public async Task<BacktestResponse> BacktestAsync(BacktestRequest request)
         {
             request.PortfolioName = "PortfolioUltimateSmoother";
@@ -47,9 +42,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
             return new();
         }
 
-        /// <summary>
-        /// Оптимизация стратегий портфеля
-        /// </summary>
+        /// <inheritdoc />
         public async Task<OptimizationResponse> OptimizationAsync(OptimizationRequest request)
         {
             request.PortfolioName = "PortfolioUltimateSmoother";
@@ -71,9 +64,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
             return new();
         }
 
-        /// <summary>
-        /// Мониторинг стратегий
-        /// </summary>
+        /// <inheritdoc />
         public async Task<MonitorResponse> MonitorAsync(MonitorRequest request)
         {
             request.PortfolioName = "PortfolioUltimateSmoother";
@@ -112,7 +103,6 @@ namespace Oid85.FinMarket.Algo.Application.Services
                         var positionListItem = new PositionListItem
                         {
                             Date = x,
-                            PositionType = positionType,
                             ColorFill = colorFill
                         };
                         
@@ -140,6 +130,17 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
                 return positionType;
             }
+        }
+
+        /// <inheritdoc />
+        public async Task<PortfolioListResponse> PortfolioListAsync(PortfolioListRequest request)
+        {
+            var algoSettings = options.Value;
+
+            return new PortfolioListResponse
+            {
+                Items = [.. algoSettings.Portfolios.Select(x => new PortfolioListItem { Name = x.Name })]
+            };
         }
 
         /// <summary>

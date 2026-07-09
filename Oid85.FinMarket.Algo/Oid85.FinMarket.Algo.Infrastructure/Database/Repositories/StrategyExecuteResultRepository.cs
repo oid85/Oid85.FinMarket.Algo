@@ -1,13 +1,9 @@
-﻿using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using NLog.Filters;
 using Oid85.FinMarket.Algo.Application.Interfaces.Repositories;
-using Oid85.FinMarket.Algo.Common.Utils;
 using Oid85.FinMarket.Algo.Core.Configuration;
 using Oid85.FinMarket.Algo.Core.Models;
 using Oid85.FinMarket.Algo.Infrastructure.Database.Entities;
-using static Grpc.Core.Metadata;
 
 namespace Oid85.FinMarket.Algo.Infrastructure.Database.Repositories
 {

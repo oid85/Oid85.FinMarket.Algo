@@ -1,6 +1,4 @@
-﻿using System.Collections.Concurrent;
-
-namespace Oid85.FinMarket.Algo.Core.Models;
+﻿namespace Oid85.FinMarket.Algo.Core.Models;
 
 public class Strategy
 {
