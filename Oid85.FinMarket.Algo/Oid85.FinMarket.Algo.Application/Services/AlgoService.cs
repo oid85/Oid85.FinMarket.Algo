@@ -23,21 +23,24 @@ namespace Oid85.FinMarket.Algo.Application.Services
         /// <inheritdoc />
         public async Task<BacktestResponse> BacktestAsync(BacktestRequest request)
         {
-            request.PortfolioName = "PortfolioUltimateSmoother";
+            var algoSettings = options.Value;
 
-            string processName = KnownProcessNames.Backtest;
+            foreach (var portfolioSetting in algoSettings.Portfolios)
+            {
+                string processName = KnownProcessNames.Backtest;
 
-            await strategyExecuteResultRepository.DeleteAsync(request.PortfolioName, processName);
+                await strategyExecuteResultRepository.DeleteAsync(portfolioSetting.Name, processName);
 
-            var strategyExecuteResults = await ExecuteAsync(
-                new()
-                {
-                    PortfolioName = request.PortfolioName,
-                    IsOptimization = false,
-                    ProcessName = processName
-                });
+                var strategyExecuteResults = await ExecuteAsync(
+                    new()
+                    {
+                        PortfolioName = portfolioSetting.Name,
+                        IsOptimization = false,
+                        ProcessName = processName
+                    });
 
-            await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
+                await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
+            }
 
             return new();
         }
@@ -45,21 +48,24 @@ namespace Oid85.FinMarket.Algo.Application.Services
         /// <inheritdoc />
         public async Task<OptimizationResponse> OptimizationAsync(OptimizationRequest request)
         {
-            request.PortfolioName = "PortfolioUltimateSmoother";
+            var algoSettings = options.Value;
 
-            string processName = KnownProcessNames.Optimization;
+            foreach (var portfolioSetting in algoSettings.Portfolios)
+            {
+                string processName = KnownProcessNames.Optimization;
 
-            await strategyExecuteResultRepository.DeleteAsync(request.PortfolioName, processName);
+                await strategyExecuteResultRepository.DeleteAsync(portfolioSetting.Name, processName);
 
-            var strategyExecuteResults = await ExecuteAsync(
-                new()
-                {
-                    PortfolioName = request.PortfolioName,
-                    IsOptimization = true,
-                    ProcessName = processName
-                });
+                var strategyExecuteResults = await ExecuteAsync(
+                    new()
+                    {
+                        PortfolioName = portfolioSetting.Name,
+                        IsOptimization = true,
+                        ProcessName = processName
+                    });
 
-            await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
+                await strategyExecuteResultRepository.AddAsync(strategyExecuteResults);
+            }
 
             return new();
         }
@@ -67,7 +73,10 @@ namespace Oid85.FinMarket.Algo.Application.Services
         /// <inheritdoc />
         public async Task<MonitorResponse> MonitorAsync(MonitorRequest request)
         {
-            request.PortfolioName = "PortfolioUltimateSmoother";
+            var algoSettings = options.Value;
+
+            if (string.IsNullOrEmpty(request.PortfolioName))
+                request.PortfolioName = algoSettings.Portfolios.First().Name;
 
             var strategyExecuteResults = await ExecuteAsync(
                 new()
@@ -77,58 +86,55 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     ProcessName = KnownProcessNames.Backtest
                 });
             
-            var from = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * 30));
+            var from = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * 100));
             var to = DateOnly.FromDateTime(DateTime.Today);
             var dates = DateUtils.GetDates(from, to);
 
+            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == request.PortfolioName);
+            var tickers = algoSettings.TickerLists.Find(x => x.Name == portfolioSettings!.TickerList)!.Tickers;
+
             var response = new MonitorResponse { Dates = dates };
 
-            foreach (var strategyExecuteResult in strategyExecuteResults)
+            foreach (var ticker in tickers)
             {
-                var positionList = new PositionList 
+                var positionList = new PositionList() { Ticker = ticker };
+
+                var strategyExecuteResultsByTicker = strategyExecuteResults.Where(x => x.Ticker == ticker).ToList();
+
+                if (strategyExecuteResultsByTicker is [])
+                    positionList.PositionListItems = [.. dates.Select(x => new PositionListItem { Date = x, ColorFill = KnownColors.White })];
+
+                else
                 {
-                    Ticker = strategyExecuteResult.Ticker,
-                    PositionListItems = dates
-                    .Select(x =>
+                    foreach (var date in dates)
                     {
-                        var positionType = GetPositionType(strategyExecuteResult.DiagramPoints, x);
+                        var positionListItem = new PositionListItem { Date = date };
 
-                        var colorFill = positionType switch
-                        {
-                            KnownPositionTypes.Long => KnownColors.Green,
-                            KnownPositionTypes.Short => KnownColors.Red,
-                            _ => KnownColors.White
-                        };
+                        var positionListItemData = GetPositionData(strategyExecuteResultsByTicker, date);
 
-                        var positionListItem = new PositionListItem
-                        {
-                            Date = x,
-                            ColorFill = colorFill
-                        };
-                        
-                        return positionListItem;
-                    }).ToList()                    
-                };
+                        positionListItem.ColorFill = positionListItemData;
+
+                        positionList.PositionListItems.Add(positionListItem);
+                    }
+                }
 
                 response.PositionLists.Add(positionList);
             }
 
             return response;
 
-            string? GetPositionType(List<DiagramPoint> diagramPoints, DateOnly date)
+            string GetPositionData(List<StrategyExecuteResult> strategyExecuteResults, DateOnly date)
             {
-                var diagramPoint = diagramPoints.Find(x => x.Date == date);
-                
-                if (diagramPoint is null) return null;
+                var diagramPoints = strategyExecuteResults
+                    .SelectMany(x => x.DiagramPoints)
+                    .Where(x => x.Date == date)
+                    .Where(x => x.PositionDirection == 1)
+                    .ToList();
 
-                var positionType = diagramPoint.PositionDirection switch
-                {
-                    1 => KnownPositionTypes.Long,
-                    -1 => KnownPositionTypes.Short,
-                    _ => null
-                };
+                if (diagramPoints is [])
+                    return KnownColors.White;
 
-                return positionType;
+                return KnownColors.Green;
             }
         }
 

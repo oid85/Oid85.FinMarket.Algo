@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<IAlgoService, AlgoService>();
         services.AddScoped<IDataService, DataService>();
+        services.AddScoped<IPortfolioService, PortfolioService>();
 
         services.AddScoped<IIndicatorFactory, IndicatorFactory>();
 

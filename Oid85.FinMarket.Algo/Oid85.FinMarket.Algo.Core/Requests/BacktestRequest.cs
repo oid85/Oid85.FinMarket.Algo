@@ -2,6 +2,5 @@
 {
     public class BacktestRequest
     {
-        public string PortfolioName { get; set; }
     }
 }

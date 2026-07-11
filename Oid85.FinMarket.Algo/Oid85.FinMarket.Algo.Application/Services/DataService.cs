@@ -16,7 +16,9 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             _candleData = [];
 
-            foreach (var ticker in tickers) 
+            List<string> tickerList = [.. tickers, "TMON"];
+
+            foreach (var ticker in tickerList) 
                 _candleData.Add(ticker, await GetCandlesByTickerAsync(ticker));
 
             return _candleData;
