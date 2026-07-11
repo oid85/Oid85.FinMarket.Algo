@@ -20,6 +20,10 @@ namespace Oid85.FinMarket.Algo.Infrastructure.ApiClients
         public async Task<GetCandleListResponse> GetCandleListAsync(GetCandleListRequest request) =>
             await GetCachedDataAsync<GetCandleListRequest, GetCandleListResponse>("/api/candles/list", request);
 
+        /// <inheritdoc />
+        public async Task<GetInstrumentListResponse> GetInstrumentListAsync(GetInstrumentListRequest request) =>
+            await GetResponseAsync<GetInstrumentListRequest, GetInstrumentListResponse>("/api/instruments/list", request);
+
         private async Task<TResponse> GetCachedDataAsync<TRequest, TResponse>(string url, TRequest request) where TResponse : new()
         {
             string key = StringUtils.GetMd5($"{nameof(TRequest)}_{JsonSerializer.Serialize(request)}");

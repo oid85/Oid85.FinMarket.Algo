@@ -9,6 +9,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
         : IDataService
     {
         private Dictionary<string, List<Candle>>? _candleData = null;
+        private Dictionary<string, Instrument>? _instrumentData = null;
 
         public async Task<Dictionary<string, List<Candle>>> GetCandleDataAsync(List<string> tickers)
         {
@@ -22,6 +23,25 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 _candleData.Add(ticker, await GetCandlesByTickerAsync(ticker));
 
             return _candleData;
+        }
+
+        public async Task<Dictionary<string, Instrument>> GetInstrumentDataAsync(List<string> tickers)
+        {
+            if (_instrumentData is not null) return _instrumentData;
+
+            _instrumentData = (await storageApiClient.GetInstrumentListAsync(new())).Result.Instruments
+                .Where(x => tickers.Contains(x.Ticker))
+                .ToDictionary(
+                k => k.Ticker,
+                v => new Instrument
+                {
+                    Ticker = v.Ticker,
+                    Name = v.Name,
+                    Type = v.Type,
+                    Lot = v.Lot
+                });
+
+            return _instrumentData;
         }
 
         private async Task<List<Candle>> GetCandlesByTickerAsync(string ticker)

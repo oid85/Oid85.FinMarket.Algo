@@ -12,5 +12,10 @@ namespace Oid85.FinMarket.Algo.Application.Interfaces.ApiClients
         /// Получить свечи
         /// </summary>
         Task<GetCandleListResponse> GetCandleListAsync(GetCandleListRequest request);
+
+        /// <summary>
+        /// Получить инструменты
+        /// </summary>
+        Task<GetInstrumentListResponse> GetInstrumentListAsync(GetInstrumentListRequest request);
     }
 }
