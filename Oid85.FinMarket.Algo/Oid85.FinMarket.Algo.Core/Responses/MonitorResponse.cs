@@ -16,5 +16,6 @@
     {
         public DateOnly Date { get; set; }
         public string ColorFill { get; set; } = "#FFFFFF";
+        public int? Units { get; set; } = null;
     }
 }

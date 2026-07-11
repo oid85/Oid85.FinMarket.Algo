@@ -86,7 +86,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     ProcessName = KnownProcessNames.Backtest
                 });
             
-            var from = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * 100));
+            var from = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * 30));
             var to = DateOnly.FromDateTime(DateTime.Today);
             var dates = DateUtils.GetDates(from, to);
 
@@ -110,9 +110,10 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     {
                         var positionListItem = new PositionListItem { Date = date };
 
-                        var positionListItemData = GetPositionData(strategyExecuteResultsByTicker, date);
+                        var (colorFill, units) = GetPositionData(strategyExecuteResultsByTicker, date);
 
-                        positionListItem.ColorFill = positionListItemData;
+                        positionListItem.ColorFill = colorFill;
+                        positionListItem.Units = units;
 
                         positionList.PositionListItems.Add(positionListItem);
                     }
@@ -123,18 +124,18 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             return response;
 
-            string GetPositionData(List<StrategyExecuteResult> strategyExecuteResults, DateOnly date)
+            (string ColorFill, int? Units) GetPositionData(List<StrategyExecuteResult> strategyExecuteResults, DateOnly date)
             {
-                var diagramPoints = strategyExecuteResults
+                var count = strategyExecuteResults
                     .SelectMany(x => x.DiagramPoints)
                     .Where(x => x.Date == date)
                     .Where(x => x.PositionDirection == 1)
-                    .ToList();
+                    .Count();
 
-                if (diagramPoints is [])
-                    return KnownColors.White;
+                if (count == 0)
+                    return (KnownColors.White, null);
 
-                return KnownColors.Green;
+                return (KnownColors.Green, count);
             }
         }
 

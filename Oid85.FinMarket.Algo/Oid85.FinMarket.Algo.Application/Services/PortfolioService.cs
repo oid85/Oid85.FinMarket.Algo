@@ -5,7 +5,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
 {
     public class PortfolioService : IPortfolioService
     {
-        public Dictionary<string, PortfolioPosition> GetPortfolioCurrentPositions(List<StrategyExecuteResult> strategyExecuteResults)
+        public Dictionary<string, PortfolioPosition> GetCurrentPortfolioPositions(List<StrategyExecuteResult> strategyExecuteResults)
         {
             throw new NotImplementedException();
         }
