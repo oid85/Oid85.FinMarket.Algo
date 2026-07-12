@@ -1,4 +1,5 @@
 ﻿using Oid85.FinMarket.Algo.Application.Interfaces.Services;
+using Oid85.FinMarket.Algo.Common.KnownConstants;
 using Oid85.FinMarket.Algo.Common.Utils;
 using Oid85.FinMarket.Algo.Core.Models;
 
@@ -34,8 +35,15 @@ namespace Oid85.FinMarket.Algo.Application.Services
             double totalSum = startMoney;
 
             var tickers = strategyExecuteResults.Select(x => x.Ticker).Distinct().ToList();
-            var candleData = await dataService.GetCandleDataAsync([.. tickers, "TMON"]);
-            var instrumentData = await dataService.GetInstrumentDataAsync([..tickers, "TMON"]);
+            var candleData = await dataService.GetCandleDataAsync([.. tickers, KnownTickers.TMON]);
+            var instrumentData = await dataService.GetInstrumentDataAsync([..tickers, KnownTickers.TMON]);
+
+            var positionDirectionData = strategyExecuteResults
+                .Select(x =>
+                new Tuple<string, Dictionary<DateOnly, int>>(
+                    x.Ticker,
+                    x.DiagramPoints.ToDictionary(k => k.Date, v => v.PositionDirection ?? 0)))
+                .ToList();
 
             var weight = tickers.ToDictionary(k => k, v => 0);
             var sizes = tickers.ToDictionary(k => k, v => 0);
@@ -43,7 +51,17 @@ namespace Oid85.FinMarket.Algo.Application.Services
             var prices = tickers.ToDictionary(k => k, v => 0.0);
             var lots = instrumentData.ToDictionary(k => k.Key, v => v.Value.Lot ?? 1);
 
+            foreach (var date in dates)
+            {
+
+            }
+
             return new();
+
+            int GetWeight(string ticker, DateOnly date)
+            {
+                return 0;
+            }
         }
     }
 }

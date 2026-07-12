@@ -1,5 +1,6 @@
 ﻿using Oid85.FinMarket.Algo.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Algo.Application.Interfaces.Services;
+using Oid85.FinMarket.Algo.Common.KnownConstants;
 using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Services
@@ -17,7 +18,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             _candleData = [];
 
-            List<string> tickerList = [.. tickers, "TMON"];
+            List<string> tickerList = [.. tickers, KnownTickers.TMON];
 
             foreach (var ticker in tickerList.Distinct()) 
                 _candleData.Add(ticker, await GetCandlesByTickerAsync(ticker));
