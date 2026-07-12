@@ -5,11 +5,11 @@
         /// <summary>
         /// Капитал
         /// </summary>
-        public Dictionary<DateOnly, double> EqiutyCurve { get; set; } = [];
+        public List<DateValue<double>> EqiutyCurve { get; set; } = [];
 
         /// <summary>
         /// Просадка
         /// </summary>
-        public Dictionary<DateOnly, double> DrawdownCurve { get; set; } = [];
+        public List<DateValue<double>> DrawdownCurve { get; set; } = [];
     }
 }

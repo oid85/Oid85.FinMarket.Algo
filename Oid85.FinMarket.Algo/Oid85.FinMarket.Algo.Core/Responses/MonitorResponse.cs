@@ -9,10 +9,10 @@
     public class PositionList
     {
         public string Ticker { get; set; } = string.Empty;
-        public List<PositionListItem> PositionListItems { get; set; } = [];
+        public List<PositionItem> PositionItems { get; set; } = [];
     }
 
-    public class PositionListItem
+    public class PositionItem
     {
         public DateOnly Date { get; set; }
         public string ColorFill { get; set; } = "#FFFFFF";

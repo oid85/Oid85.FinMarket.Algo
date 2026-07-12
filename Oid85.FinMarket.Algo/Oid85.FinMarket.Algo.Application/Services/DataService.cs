@@ -19,7 +19,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             List<string> tickerList = [.. tickers, "TMON"];
 
-            foreach (var ticker in tickerList) 
+            foreach (var ticker in tickerList.Distinct()) 
                 _candleData.Add(ticker, await GetCandlesByTickerAsync(ticker));
 
             return _candleData;
@@ -42,6 +42,19 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 });
 
             return _instrumentData;
+        }
+
+        public double? GetPrice(string ticker, DateOnly date)
+        {
+            if (_candleData is null) return null;
+
+            var candles = _candleData[ticker];
+
+            if (candles is null) return null;
+
+            var candle = candles.Find(x => x.Date == date);
+
+            return candle?.Close;
         }
 
         private async Task<List<Candle>> GetCandlesByTickerAsync(string ticker)

@@ -102,20 +102,20 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 var strategyExecuteResultsByTicker = strategyExecuteResults.Where(x => x.Ticker == ticker).ToList();
 
                 if (strategyExecuteResultsByTicker is [])
-                    positionList.PositionListItems = [.. dates.Select(x => new PositionListItem { Date = x, ColorFill = KnownColors.White })];
+                    positionList.PositionItems = [.. dates.Select(x => new PositionItem { Date = x, ColorFill = KnownColors.White })];
 
                 else
                 {
                     foreach (var date in dates)
                     {
-                        var positionListItem = new PositionListItem { Date = date };
+                        var positionItem = new PositionItem { Date = date };
 
                         var (colorFill, units) = GetPositionData(strategyExecuteResultsByTicker, date);
 
-                        positionListItem.ColorFill = colorFill;
-                        positionListItem.Units = units;
+                        positionItem.ColorFill = colorFill;
+                        positionItem.Units = units;
 
-                        positionList.PositionListItems.Add(positionListItem);
+                        positionList.PositionItems.Add(positionItem);
                     }
                 }
 
