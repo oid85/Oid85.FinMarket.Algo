@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Drawing;
+using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Oid85.FinMarket.Algo.Application.Interfaces.Repositories;
@@ -125,6 +126,12 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             var portfolioDiagram = await portfolioService.GetPortfolioDiagramAsync(strategyExecuteResults);
 
+            response.Series = 
+                [
+                    GetPortfolioBacktestSeries(portfolioDiagram.EqiutyCurve, "Equity", KnownColors.Green),
+                    GetPortfolioBacktestSeries(portfolioDiagram.DrawdownCurve, "Drawdown", KnownColors.Red)
+                ];
+
             return response;
 
             (string ColorFill, int? Units) GetPositionData(List<StrategyExecuteResult> strategyExecuteResults, DateOnly date)
@@ -141,6 +148,15 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 return (KnownColors.Green, count);
             }
         }
+
+        private static PortfolioBacktestSeries GetPortfolioBacktestSeries(List<DateValue<double>> dateValues, string description, string color) => 
+            new()
+            {
+                Name = $"{description}",
+                Color = color,
+                ColorFill = color,
+                Data = [.. dateValues.Select(x => new PortfolioRebalanceSeriesItem { Date = x.Date, Value = x.Value })]
+            };
 
         /// <inheritdoc />
         public async Task<PortfolioListResponse> PortfolioListAsync(PortfolioListRequest request)

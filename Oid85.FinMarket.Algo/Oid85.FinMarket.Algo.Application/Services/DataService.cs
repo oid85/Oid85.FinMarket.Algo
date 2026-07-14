@@ -31,7 +31,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
             if (_instrumentData is not null) return _instrumentData;
 
             _instrumentData = (await storageApiClient.GetInstrumentListAsync(new())).Result.Instruments
-                .Where(x => tickers.Contains(x.Ticker))
+                .Where(x => tickers.Distinct().Contains(x.Ticker))
                 .ToDictionary(
                 k => k.Ticker,
                 v => new Instrument
@@ -53,9 +53,11 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             if (candles is null) return null;
 
-            var candle = candles.Find(x => x.Date == date);
+            var candle = candles.FindLast(x => x.Date <= date);
 
-            return candle?.Close;
+            if (candle is null) return null;
+
+            return candle.Close;
         }
 
         private async Task<List<Candle>> GetCandlesByTickerAsync(string ticker)
