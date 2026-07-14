@@ -39,9 +39,8 @@ namespace Oid85.FinMarket.Algo.Application.Services
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var instrumentData = await dataService.GetInstrumentDataAsync(tickers);
 
-            List<(string Ticker, List<(DateOnly Date, int Weight)> WeightData)> positionDirectionData = strategyExecuteResults
-                .Select(x => (x.Ticker, x.DiagramPoints.Select(xx => (xx.Date, xx.PositionDirection ?? 0)).ToList()))
-                .ToList();
+            List<(string Ticker, List<(DateOnly Date, int Weight)> WeightData)> positionDirectionData = 
+                [.. strategyExecuteResults.Select(x => (x.Ticker, x.DiagramPoints.Select(xx => (xx.Date, xx.PositionDirection ?? 0)).ToList()))];
 
             var weights = tickers.ToDictionary(k => k, v => 0);
             var sizes = tickers.ToDictionary(k => k, v => 0);
