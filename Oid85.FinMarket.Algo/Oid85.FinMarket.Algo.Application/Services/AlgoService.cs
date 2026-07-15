@@ -88,7 +88,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     ProcessName = KnownProcessNames.Backtest
                 });
             
-            var from = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * 30));
+            var from = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * 365));
             var to = DateOnly.FromDateTime(DateTime.Today);
             var dates = DateUtils.GetDates(from, to);
 
@@ -128,8 +128,8 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             response.Series = 
                 [
-                    GetPortfolioBacktestSeries(portfolioDiagram.EqiutyCurve, "Equity", KnownColors.Green),
-                    GetPortfolioBacktestSeries(portfolioDiagram.DrawdownCurve, "Drawdown", KnownColors.Red)
+                    GetPortfolioBacktestSeries(portfolioDiagram.EqiutyCurve, "Капитал, тыс. руб.", KnownColors.Green),
+                    GetPortfolioBacktestSeries(portfolioDiagram.DrawdownCurve, "Просадка, тыс. руб.", KnownColors.Red)
                 ];
 
             return response;
@@ -155,7 +155,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 Name = $"{description}",
                 Color = color,
                 ColorFill = color,
-                Data = [.. dateValues.Select(x => new PortfolioRebalanceSeriesItem { Date = x.Date, Value = x.Value })]
+                Data = [.. dateValues.Select(x => new PortfolioRebalanceSeriesItem { Date = x.Date, Value = (x.Value / 1000.0).RoundTo(4) })]
             };
 
         /// <inheritdoc />

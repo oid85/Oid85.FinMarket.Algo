@@ -20,5 +20,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IIndicatorFactory, IndicatorFactory>();
 
         services.AddKeyedTransient<Strategy, UltimateSmootherInclinationLong>("UltimateSmootherInclinationLong");
+        services.AddKeyedTransient<Strategy, SupertrendLong>("SupertrendLong");
     }
 }

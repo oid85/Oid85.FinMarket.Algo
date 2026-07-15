@@ -3,35 +3,26 @@ using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Strategies
 {
-    /// <summary>
-    /// Правило входа  - UltimateSmoother растет
-    /// Правило выхода - UltimateSmoother падает
-    /// </summary>
-    public class UltimateSmootherInclinationLong(
-        IIndicatorFactory indicatorFactory)
+    public class SupertrendLong(
+        IIndicatorFactory indicatorFactory) 
         : Strategy
     {
         public override void Execute()
         {
             // Получаем параметры
             int period = Parameters["Period"];
+            double multiplier = Parameters["Multiplier"] / 10.0;
             
             // Расчет индикаторов
-            var us = indicatorFactory.UltimateSmoother(ClosePrices, period);
+            List<double> supertrend = indicatorFactory.Supertrend(Candles, period, multiplier);
 
             for (int i = StabilizationPeriod; i < Candles.Count - 1; i++)
             {
                 // Правило входа
-                SignalLong =
-                    us[i - 2] > us[i - 3] &&
-                    us[i - 1] > us[i - 2] &&
-                    us[i] > us[i - 1];
-
+                SignalLong = Candles[i].Close > supertrend[i];
+                
                 // Правило выхода
-                SignalCloseLong =
-                    us[i - 2] < us[i - 3] &&
-                    us[i - 1] < us[i - 2] &&
-                    us[i] < us[i - 1];
+                SignalCloseLong = Candles[i].Close < supertrend[i];
                 
                 // Задаем цену для заявки
                 double orderPrice = Candles[i].Close;
@@ -52,7 +43,7 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
                 }
                 
                 // Отрисовка
-                DiagramPoints[i].Indicator = us[i];
+                DiagramPoints[i].Indicator = supertrend[i];
                 DiagramPoints[i].Price = Candles[i].Close;
 
                 if (LastActivePosition is not null)

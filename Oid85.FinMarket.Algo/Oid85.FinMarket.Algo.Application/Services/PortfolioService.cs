@@ -25,7 +25,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
             if (strategyExecuteResults is [])
                 return new();
 
-            double startMoney = 1_000_000.0;
+            double startMoney = 5_000_000.0;
 
             var from = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * 365));
             var to = DateOnly.FromDateTime(DateTime.Today);
