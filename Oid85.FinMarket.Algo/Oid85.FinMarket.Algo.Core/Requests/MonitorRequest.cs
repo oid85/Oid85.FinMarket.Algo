@@ -2,6 +2,6 @@
 {
     public class MonitorRequest
     {
-        public string PortfolioName { get; set; }
+        public string PortfolioName { get; set; } = string.Empty;
     }
 }

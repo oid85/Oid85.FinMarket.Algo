@@ -1,6 +1,6 @@
 ﻿namespace Oid85.FinMarket.Algo.Core.Models
 {
-    public class PortfolioDiagram
+    public class PortfolioData
     {
         /// <summary>
         /// Капитал
@@ -11,5 +11,10 @@
         /// Просадка
         /// </summary>
         public List<DateValue<double>> DrawdownCurve { get; set; } = [];
+
+        /// <summary>
+        /// Денежные средства и эквиваленты
+        /// </summary>
+        public List<DateValue<double>> MoneyCurve { get; set; } = [];
     }
 }

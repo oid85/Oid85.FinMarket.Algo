@@ -17,32 +17,6 @@ public class AlgoController(
     : BaseController
 {
     /// <summary>
-    /// Бэктест
-    /// </summary>
-    [HttpPost("portfolio/backtest")]
-    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> BacktestAsync(
-        [FromBody] BacktestRequest request) =>
-        GetResponseAsync(
-            () => algoService.BacktestAsync(request),
-            result => new BaseResponse<BacktestResponse> { Result = result });
-
-    /// <summary>
-    /// Оптимизация
-    /// </summary>
-    [HttpPost("portfolio/optimization")]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> OptimizationAsync(
-        [FromBody] OptimizationRequest request) =>
-        GetResponseAsync(
-            () => algoService.OptimizationAsync(request),
-            result => new BaseResponse<OptimizationResponse> { Result = result });
-
-    /// <summary>
     /// Мониторинг
     /// </summary>
     [HttpPost("portfolio/monitor")]

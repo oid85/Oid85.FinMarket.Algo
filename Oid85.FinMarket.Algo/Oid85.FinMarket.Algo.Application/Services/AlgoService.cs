@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Oid85.FinMarket.Algo.Application.Interfaces.Repositories;
@@ -26,8 +25,12 @@ namespace Oid85.FinMarket.Algo.Application.Services
         public async Task<BacktestResponse> BacktestAsync(BacktestRequest request)
         {
             var algoSettings = options.Value;
+            var portfolioSettingsList = algoSettings.Portfolios;
 
-            foreach (var portfolioSetting in algoSettings.Portfolios)
+            if (!string.IsNullOrEmpty(request.PortfolioName))
+                portfolioSettingsList = [.. portfolioSettingsList.Where(x => x.Name == request.PortfolioName)];
+
+            foreach (var portfolioSetting in portfolioSettingsList)
             {
                 string processName = KnownProcessNames.Backtest;
 
@@ -51,8 +54,12 @@ namespace Oid85.FinMarket.Algo.Application.Services
         public async Task<OptimizationResponse> OptimizationAsync(OptimizationRequest request)
         {
             var algoSettings = options.Value;
+            var portfolioSettingsList = algoSettings.Portfolios;
 
-            foreach (var portfolioSetting in algoSettings.Portfolios)
+            if (!string.IsNullOrEmpty(request.PortfolioName))
+                portfolioSettingsList = [.. portfolioSettingsList.Where(x => x.Name == request.PortfolioName)];
+
+            foreach (var portfolioSetting in portfolioSettingsList)
             {
                 string processName = KnownProcessNames.Optimization;
 
@@ -124,12 +131,13 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 response.PositionLists.Add(positionList);
             }
 
-            var portfolioDiagram = await portfolioService.GetPortfolioDiagramAsync(strategyExecuteResults);
+            var portfolioDiagram = await portfolioService.GetPortfolioDataAsync(request.PortfolioName, strategyExecuteResults);
 
             response.Series = 
                 [
                     GetPortfolioBacktestSeries(portfolioDiagram.EqiutyCurve, "Капитал, тыс. руб.", KnownColors.Green),
-                    GetPortfolioBacktestSeries(portfolioDiagram.DrawdownCurve, "Просадка, тыс. руб.", KnownColors.Red)
+                    GetPortfolioBacktestSeries(portfolioDiagram.DrawdownCurve, "Просадка, тыс. руб.", KnownColors.Red),
+                    GetPortfolioBacktestSeries(portfolioDiagram.MoneyCurve, "Ден. средства, тыс. руб.", KnownColors.Blue)
                 ];
 
             return response;

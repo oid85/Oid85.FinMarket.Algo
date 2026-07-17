@@ -2,5 +2,6 @@
 {
     public class OptimizationRequest
     {
+        public string PortfolioName { get; set; } = string.Empty;
     }
 }
