@@ -128,33 +128,58 @@ namespace Oid85.FinMarket.Algo.Application.Services
             List<string> tickers,
             List<DateOnly> dates)
         {
-            return new();
+            var result = new List<(string Ticker, List<(DateOnly Date, int Weight)> WeightData)>();
+
+
+
+            return result;
         }
 
         private static List<(string Ticker, int Weight)> GetPositionWeightDataByDate(            
-            List<(string Ticker, List<(DateOnly Date, int Weight)> WeightData)> positionWeightData,
+            List<(string Ticker, List<(DateOnly Date, int Weight)> WeightData)> weightData,
             DateOnly date)
         {
-            return new();
+            var result = new List<(string Ticker, int Weight)>();
+
+
+
+            return result;
         }
 
-        private static List<DateValue<int>> FillEmptyDates(
-            List<DateValue<int>> dateValues,
-            List<DateOnly> dates)
+        private static List<DateValue<int>> FillEmptyDates(List<DateValue<int>> dateValues, List<DateOnly> dates)
         {
-            return new();
+            var result = new List<DateValue<int>>();
+
+
+
+            return result;
         }
 
-        private static List<DateValue<int>> Merge(
-            List<List<DateValue<int>>> data)
+        private static List<DateValue<int>> Merge(List<List<DateValue<int>>> data, List<DateOnly> dates)
         {
-            return new();
+            var result = new List<DateValue<int>>();
+
+
+
+            return result;
         }
 
-        private static List<DateValue<int>> Map(
-            List<DiagramPoint> diagramPoints)
+        private static List<DateValue<int>> Map(List<DiagramPoint> diagramPoints)
         {
-            return new();
+            var result = new List<DateValue<int>>();
+
+            foreach (var diagramPoint in diagramPoints)
+            {
+                var dateValue = new DateValue<int> { Date = diagramPoint.Date, Value = 0 };
+
+                if (diagramPoint.PositionDirection.HasValue)
+                    if (diagramPoint.PositionDirection.Value == 1)
+                        dateValue.Value = 1;
+
+                result.Add(dateValue);
+            }
+
+            return [.. result.OrderBy(x => x.Date)];
         }
     }
 }
