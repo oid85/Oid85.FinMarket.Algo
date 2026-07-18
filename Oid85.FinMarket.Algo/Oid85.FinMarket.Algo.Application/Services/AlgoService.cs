@@ -15,7 +15,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
 {
     public class AlgoService(
         IDataService dataService,
-        IPortfolioService portfolioService,
+        IMonitorService monitorService,
         IOptions<AlgoSettings> options,
         IStrategyExecuteResultRepository strategyExecuteResultRepository,
         IServiceProvider serviceProvider)
@@ -131,7 +131,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 response.PositionLists.Add(positionList);
             }
 
-            var portfolioDiagram = await portfolioService.GetPortfolioDataAsync(request.PortfolioName, strategyExecuteResults);
+            var portfolioDiagram = await monitorService.GetPortfolioDataAsync(request.PortfolioName, strategyExecuteResults);
 
             response.Series = 
                 [

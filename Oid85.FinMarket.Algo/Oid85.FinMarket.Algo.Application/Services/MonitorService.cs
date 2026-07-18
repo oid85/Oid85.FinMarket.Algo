@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Microsoft.Extensions.Options;
+using Oid85.FinMarket.Algo.Application.Helpers;
 using Oid85.FinMarket.Algo.Application.Interfaces.Services;
 using Oid85.FinMarket.Algo.Common.KnownConstants;
 using Oid85.FinMarket.Algo.Common.Utils;
@@ -8,10 +9,10 @@ using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Services
 {
-    public class PortfolioService(
+    public class MonitorService(
         IOptions<AlgoSettings> options,
         IDataService dataService) 
-        : IPortfolioService
+        : IMonitorService
     {
         public async Task<PortfolioData> GetPortfolioDataAsync(string portfolioName, List<StrategyExecuteResult> strategyExecuteResults)
         {
@@ -35,7 +36,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var instrumentData = await dataService.GetInstrumentDataAsync(tickers);
 
-            var positionWeightData = GetPositionWeightData(strategyExecuteResults, tickers, dates);
+            var positionWeightData = MonitorHelper.GetPositionWeightData(strategyExecuteResults, tickers, dates);
 
             var weights = tickers.ToDictionary(k => k, v => 0);
             var sizes = tickers.ToDictionary(k => k, v => 0);
@@ -67,7 +68,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 
                 void UpdateWeights()
                 {
-                    List<(string Ticker, int Weight)> positionWeightDataByDate = GetPositionWeightDataByDate(positionWeightData, date);
+                    List<(string Ticker, int Weight)> positionWeightDataByDate = MonitorHelper.GetPositionWeightDataByDate(positionWeightData, date);
                     
                     weights = tickers.ToDictionary(k => k, v => positionWeightDataByDate.Where(x => x.Ticker == v).Sum(x => x.Weight));
                     int count = weights.Where(x => x.Key != KnownTickers.TMON).ToDictionary().Values.Sum();
@@ -121,65 +122,6 @@ namespace Oid85.FinMarket.Algo.Application.Services
             }
 
             return portfolioDiagram;
-        }
-
-        private static List<(string Ticker, List<(DateOnly Date, int Weight)> WeightData)> GetPositionWeightData(
-            List<StrategyExecuteResult> strategyExecuteResults,
-            List<string> tickers,
-            List<DateOnly> dates)
-        {
-            var result = new List<(string Ticker, List<(DateOnly Date, int Weight)> WeightData)>();
-
-
-
-            return result;
-        }
-
-        private static List<(string Ticker, int Weight)> GetPositionWeightDataByDate(            
-            List<(string Ticker, List<(DateOnly Date, int Weight)> WeightData)> weightData,
-            DateOnly date)
-        {
-            var result = new List<(string Ticker, int Weight)>();
-
-
-
-            return result;
-        }
-
-        private static List<DateValue<int>> FillEmptyDates(List<DateValue<int>> dateValues, List<DateOnly> dates)
-        {
-            var result = new List<DateValue<int>>();
-
-
-
-            return result;
-        }
-
-        private static List<DateValue<int>> Merge(List<List<DateValue<int>>> data, List<DateOnly> dates)
-        {
-            var result = new List<DateValue<int>>();
-
-
-
-            return result;
-        }
-
-        private static List<DateValue<int>> Map(List<DiagramPoint> diagramPoints)
-        {
-            var result = new List<DateValue<int>>();
-
-            foreach (var diagramPoint in diagramPoints)
-            {
-                var dateValue = new DateValue<int> { Date = diagramPoint.Date, Value = 0 };
-
-                if (diagramPoint.PositionDirection.HasValue)
-                    if (diagramPoint.PositionDirection.Value == 1)
-                        dateValue.Value = 1;
-
-                result.Add(dateValue);
-            }
-
-            return [.. result.OrderBy(x => x.Date)];
         }
     }
 }

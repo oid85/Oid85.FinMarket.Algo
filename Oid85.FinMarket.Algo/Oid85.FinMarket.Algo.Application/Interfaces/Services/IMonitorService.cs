@@ -2,7 +2,7 @@
 
 namespace Oid85.FinMarket.Algo.Application.Interfaces.Services
 {
-    public interface IPortfolioService
+    public interface IMonitorService
     {
         Task<PortfolioData> GetPortfolioDataAsync(string portfolioName, List<StrategyExecuteResult> strategyExecuteResults);
     }
