@@ -21,7 +21,7 @@ namespace Oid85.FinMarket.Algo.Application.Helpers
                 result.Add(new (ticker, [.. Merge(data, dates).Select(x => new DateWeight { Date = x.Date, Weight = x.Value})]));
             }
 
-            return result;
+            return [.. result.OrderBy(x => x.Ticker)];
         }
 
         public static List<TickerWeight> GetPositionWeightDataByDate(

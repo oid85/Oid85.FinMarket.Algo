@@ -4,6 +4,7 @@
     {
         public List<DateOnly> Dates { get; set; } = [];
         public List<PositionWeightData> PositionWeightData { get; set; } = [];
+        public List<PositionItem> CurrentPositions { get; set; } = [];
         public List<PortfolioBacktestSeries> Series { get; set; } = [];
     }
 
@@ -18,6 +19,15 @@
         public DateOnly Date { get; set; }
         public string ColorFill { get; set; } = "#FFFFFF";
         public int? Weight { get; set; } = null;
+    }
+
+    public class PositionItem
+    {
+        public DateOnly Date { get; set; }
+        public string Ticker { get; set; } = string.Empty;
+        public int Weight { get; set; }
+        public int Size { get; set; }
+        public double Cost { get; set; }
     }
 
     public class PortfolioBacktestSeries

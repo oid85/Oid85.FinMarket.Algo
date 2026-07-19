@@ -10,6 +10,7 @@ using Oid85.FinMarket.Algo.Core.Configuration;
 using Oid85.FinMarket.Algo.Core.Models;
 using Oid85.FinMarket.Algo.Core.Requests;
 using Oid85.FinMarket.Algo.Core.Responses;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Oid85.FinMarket.Algo.Application.Services
 {
@@ -117,11 +118,17 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             response.PositionWeightData = GetPositionWeightData(portfolioData.PositionWeightData);
 
+            var instrumentData = await dataService.GetInstrumentDataAsync(tickers);
+            var lots = instrumentData.ToDictionary(k => k.Key, v => v.Value.Lot ?? 1);
+
+            response.CurrentPositions = GetCurrentPositions(portfolioData.PositionWeightData, portfolioSettings!.Money, strategyExecuteResults.Count, lots);
+
             return response;
         }
 
         private static List<PositionWeightData> GetPositionWeightData(List<(string Ticker, List<DateWeight> WeightData)> positionWeightData) =>
             [.. positionWeightData
+                .Where(x => x.Ticker != KnownTickers.TMON)
                 .Select(x => new PositionWeightData
                 {
                     Ticker = x.Ticker,
@@ -135,6 +142,45 @@ namespace Oid85.FinMarket.Algo.Application.Services
                                 : KnownColors.White
                         })]
                 })];
+
+        private List<PositionItem> GetCurrentPositions(
+            List<(string Ticker, List<DateWeight> WeightData)> positionWeightData, 
+            double money,
+            int totalUnits,
+            Dictionary<string, int> lots)
+        {
+            List<(string Ticker, DateWeight Weight)> lastPositionWeight = 
+                [.. positionWeightData
+                    .Where(x => x.Ticker != KnownTickers.TMON)
+                    .Select(x => (x.Ticker, x.WeightData.Last()))];
+
+            var baseUnit = money / totalUnits;
+
+            var result = new List<PositionItem>();
+
+            foreach (var item in lastPositionWeight)
+            {
+                var price = dataService.GetPrice(item.Ticker, item.Weight.Date)!.Value;
+                double tickerCost = baseUnit * item.Weight.Weight;
+                double tickerSize = tickerCost / price;
+                tickerSize /= lots[item.Ticker];
+                tickerSize = Math.Truncate(tickerSize);
+                tickerSize *= lots[item.Ticker];
+                int size = Convert.ToInt32(tickerSize);
+
+                result.Add(
+                    new() 
+                    {
+                        Date = item.Weight.Date, 
+                        Ticker = item.Ticker,
+                        Weight = item.Weight.Weight,
+                        Size = size,
+                        Cost = tickerCost.RoundTo(2)
+                    });
+            }
+
+            return result;
+        }
 
         private static PortfolioBacktestSeries GetPortfolioBacktestSeries(List<DateValue<double>> dateValues, string description, string color) => 
             new()
