@@ -104,58 +104,37 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             var response = new MonitorResponse { Dates = dates };
 
-            foreach (var ticker in tickers)
-            {
-                var positionList = new PositionList() { Ticker = ticker };
-
-                var strategyExecuteResultsByTicker = strategyExecuteResults.Where(x => x.Ticker == ticker).ToList();
-
-                if (strategyExecuteResultsByTicker is [])
-                    positionList.PositionItems = [.. dates.Select(x => new PositionItem { Date = x, ColorFill = KnownColors.White })];
-
-                else
-                {
-                    foreach (var date in dates)
-                    {
-                        var positionItem = new PositionItem { Date = date };
-
-                        var (colorFill, units) = GetPositionData(strategyExecuteResultsByTicker, date);
-
-                        positionItem.ColorFill = colorFill;
-                        positionItem.Units = units;
-
-                        positionList.PositionItems.Add(positionItem);
-                    }
-                }
-
-                response.PositionLists.Add(positionList);
-            }
-
-            var portfolioDiagram = await monitorService.GetPortfolioDataAsync(request.PortfolioName, strategyExecuteResults);
+            var portfolioData = await monitorService.GetPortfolioDataAsync(request.PortfolioName, strategyExecuteResults);
 
             response.Series = 
                 [
-                    GetPortfolioBacktestSeries(portfolioDiagram.EqiutyCurve, "Капитал, тыс. руб.", KnownColors.Green),
-                    GetPortfolioBacktestSeries(portfolioDiagram.DrawdownCurve, "Просадка, тыс. руб.", KnownColors.Red),
-                    GetPortfolioBacktestSeries(portfolioDiagram.MoneyCurve, "Ден. средства, тыс. руб.", KnownColors.Blue)
+                    GetPortfolioBacktestSeries(portfolioData.EqiutyCurve, "Капитал, тыс. руб.", KnownColors.Green),
+                    GetPortfolioBacktestSeries(portfolioData.DrawdownCurve, "Просадка, тыс. руб.", KnownColors.Red),
+                    GetPortfolioBacktestSeries(portfolioData.MoneyCurve, "Ден. средства, тыс. руб.", KnownColors.LightBlue)
                 ];
 
+            response.Dates = dates;
+
+            response.PositionWeightData = GetPositionWeightData(portfolioData.PositionWeightData);
+
             return response;
-
-            (string ColorFill, int? Units) GetPositionData(List<StrategyExecuteResult> strategyExecuteResults, DateOnly date)
-            {
-                var count = strategyExecuteResults
-                    .SelectMany(x => x.DiagramPoints)
-                    .Where(x => x.Date == date)
-                    .Where(x => x.PositionDirection == 1)
-                    .Count();
-
-                if (count == 0)
-                    return (KnownColors.White, null);
-
-                return (KnownColors.Green, count);
-            }
         }
+
+        private static List<PositionWeightData> GetPositionWeightData(List<(string Ticker, List<DateWeight> WeightData)> positionWeightData) =>
+            [.. positionWeightData
+                .Select(x => new PositionWeightData
+                {
+                    Ticker = x.Ticker,
+                    PositionWeightItems = [.. x.WeightData
+                        .Select(xx => new PositionWeightItem
+                        {
+                            Date = xx.Date,
+                            Weight = xx.Weight,
+                            ColorFill = xx.Weight > 0 
+                                ? KnownColors.Green 
+                                : KnownColors.White
+                        })]
+                })];
 
         private static PortfolioBacktestSeries GetPortfolioBacktestSeries(List<DateValue<double>> dateValues, string description, string color) => 
             new()
@@ -163,7 +142,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 Name = $"{description}",
                 Color = color,
                 ColorFill = color,
-                Data = [.. dateValues.Select(x => new PortfolioRebalanceSeriesItem { Date = x.Date, Value = (x.Value / 1000.0).RoundTo(4) })]
+                Data = [.. dateValues.Select(x => new PortfolioBacktestSeriesItem { Date = x.Date, Value = (x.Value / 1000.0).RoundTo(4) })]
             };
 
         /// <inheritdoc />

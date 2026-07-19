@@ -16,5 +16,10 @@
         /// Денежные средства и эквиваленты
         /// </summary>
         public List<DateValue<double>> MoneyCurve { get; set; } = [];
+
+        /// <summary>
+        /// Данные по тикерам и весам
+        /// </summary>
+        public List<(string Ticker, List<DateWeight> WeightData)> PositionWeightData { get; set; } = [];
     }
 }

@@ -35,16 +35,16 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             var candleData = await dataService.GetCandleDataAsync(tickers);
             var instrumentData = await dataService.GetInstrumentDataAsync(tickers);
-
-            var positionWeightData = MonitorHelper.GetPositionWeightData(strategyExecuteResults, tickers, dates);
-
+            
             var weights = tickers.ToDictionary(k => k, v => 0);
             var sizes = tickers.ToDictionary(k => k, v => 0);
             var costs = tickers.ToDictionary(k => k, v => 0.0);
             var prices = tickers.ToDictionary(k => k, v => 0.0);
             var lots = instrumentData.ToDictionary(k => k.Key, v => v.Value.Lot ?? 1);
 
-            var portfolioDiagram = new PortfolioData();
+            var positionWeightData = MonitorHelper.GetPositionWeightData(strategyExecuteResults, tickers, dates);
+
+            var portfolioData = new PortfolioData { PositionWeightData = positionWeightData };
 
             foreach (var date in dates)
             {
@@ -54,21 +54,21 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 UpdateTotalSum();
                 Rebalance();
 
-                portfolioDiagram.EqiutyCurve.Add(new DateValue<double> { Date = date, Value = totalSum });
-                portfolioDiagram.MoneyCurve.Add(new DateValue<double> { Date = date, Value = costs[KnownTickers.TMON] });
+                portfolioData.EqiutyCurve.Add(new DateValue<double> { Date = date, Value = totalSum });
+                portfolioData.MoneyCurve.Add(new DateValue<double> { Date = date, Value = costs[KnownTickers.TMON] });
 
-                if (portfolioDiagram.EqiutyCurve.Count > 0)
+                if (portfolioData.EqiutyCurve.Count > 0)
                 {
-                    var maxEquity = portfolioDiagram.EqiutyCurve.MaxBy(x => x.Value);
-                    var currentEquity = portfolioDiagram.EqiutyCurve[^1];
+                    var maxEquity = portfolioData.EqiutyCurve.MaxBy(x => x.Value);
+                    var currentEquity = portfolioData.EqiutyCurve[^1];
                     var currentDrawdown = -1 * (maxEquity!.Value - currentEquity.Value);
 
-                    portfolioDiagram.DrawdownCurve.Add(new DateValue<double> { Date = currentEquity.Date, Value = currentDrawdown });
+                    portfolioData.DrawdownCurve.Add(new DateValue<double> { Date = currentEquity.Date, Value = currentDrawdown });
                 }
                 
                 void UpdateWeights()
                 {
-                    List<(string Ticker, int Weight)> positionWeightDataByDate = MonitorHelper.GetPositionWeightDataByDate(positionWeightData, date);
+                    var positionWeightDataByDate = MonitorHelper.GetPositionWeightDataByDate(positionWeightData, date);
                     
                     weights = tickers.ToDictionary(k => k, v => positionWeightDataByDate.Where(x => x.Ticker == v).Sum(x => x.Weight));
                     int count = weights.Where(x => x.Key != KnownTickers.TMON).ToDictionary().Values.Sum();
@@ -121,7 +121,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 }
             }
 
-            return portfolioDiagram;
+            return portfolioData;
         }
     }
 }

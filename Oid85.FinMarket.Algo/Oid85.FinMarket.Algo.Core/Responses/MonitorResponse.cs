@@ -3,21 +3,21 @@
     public class MonitorResponse
     {
         public List<DateOnly> Dates { get; set; } = [];
-        public List<PositionList> PositionLists { get; set; } = [];
+        public List<PositionWeightData> PositionWeightData { get; set; } = [];
         public List<PortfolioBacktestSeries> Series { get; set; } = [];
     }
 
-    public class PositionList
+    public class PositionWeightData
     {
         public string Ticker { get; set; } = string.Empty;
-        public List<PositionItem> PositionItems { get; set; } = [];
+        public List<PositionWeightItem> PositionWeightItems { get; set; } = [];
     }
 
-    public class PositionItem
+    public class PositionWeightItem
     {
         public DateOnly Date { get; set; }
         public string ColorFill { get; set; } = "#FFFFFF";
-        public int? Units { get; set; } = null;
+        public int? Weight { get; set; } = null;
     }
 
     public class PortfolioBacktestSeries
@@ -25,10 +25,10 @@
         public string Name { get; set; } = string.Empty;
         public string Color { get; set; } = string.Empty;
         public string ColorFill { get; set; } = string.Empty;
-        public List<PortfolioRebalanceSeriesItem> Data { get; set; } = [];
+        public List<PortfolioBacktestSeriesItem> Data { get; set; } = [];
     }
 
-    public class PortfolioRebalanceSeriesItem
+    public class PortfolioBacktestSeriesItem
     {
         public DateOnly Date { get; set; }
         public double? Value { get; set; } = null;

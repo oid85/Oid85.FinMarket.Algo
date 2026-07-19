@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oid85.FinMarket.Algo.Applic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oid85.FinMarket.Algo.Common", "Oid85.FinMarket.Algo.Common\Oid85.FinMarket.Algo.Common.csproj", "{8EB0E380-C51D-4B7C-B01C-F9C576D3F1F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Oid85.FinMarket.Algo.Application", "Test.Oid85.FinMarket.Algo.Application\Test.Oid85.FinMarket.Algo.Application.csproj", "{A6057506-0686-8498-38DF-C2FFFDE5DCBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{8EB0E380-C51D-4B7C-B01C-F9C576D3F1F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EB0E380-C51D-4B7C-B01C-F9C576D3F1F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EB0E380-C51D-4B7C-B01C-F9C576D3F1F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6057506-0686-8498-38DF-C2FFFDE5DCBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6057506-0686-8498-38DF-C2FFFDE5DCBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6057506-0686-8498-38DF-C2FFFDE5DCBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6057506-0686-8498-38DF-C2FFFDE5DCBF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
