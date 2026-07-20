@@ -65,7 +65,7 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
             int count = Convert.ToInt32(Math.Truncate(CandleData.Count * percent / 100.0));
 
             var topTickers = CandleData
-                .ToDictionary(k => k.Key, v => GetDelta(v.Value, from, to))
+                .ToDictionary(k => k.Key, v => GetDeltaPercent(v.Value, from, to))
                 .Where(x => x.Value > 0)
                 .OrderByDescending(x => x.Value)
                 .Take(count)
@@ -75,11 +75,16 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
             return topTickers ?? [];
         }
 
-        private static double GetDelta(List<Candle> candles, DateOnly from, DateOnly to)
+        private static double GetDeltaPercent(List<Candle> candles, DateOnly from, DateOnly to)
         {
-            double delta = 0;
+            var candlesFromTo = candles.Where(x => x.Date >= from).Where(x => x.Date <= to).ToList();
 
-            return delta;
+            if (candlesFromTo is []) return 0.0;
+
+            double firstPrice = candlesFromTo.First().Close;
+            double lastPrice = candlesFromTo.Last().Close;
+ 
+            return (lastPrice - firstPrice) / firstPrice * 100.0;
         }
     }
 }
