@@ -40,30 +40,6 @@ public class OptimizationController(
             result => new BaseResponse<OptimizationResponse> { Result = result });
 
     /// <summary>
-    /// Оптимизация UltimateSmoother
-    /// </summary>
-    [HttpPost("portfolio/ultimate-smoother")]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> OptimizationUltimateSmootherAsync() =>
-        GetResponseAsync(
-            () => algoService.OptimizationAsync(new() { PortfolioName = "UltimateSmoother" }),
-            result => new BaseResponse<OptimizationResponse> { Result = result });
-
-    /// <summary>
-    /// Оптимизация Supertrend
-    /// </summary>
-    [HttpPost("portfolio/supertrend")]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> OptimizationSupertrendAsync() =>
-        GetResponseAsync(
-            () => algoService.OptimizationAsync(new() { PortfolioName = "Supertrend" }),
-            result => new BaseResponse<OptimizationResponse> { Result = result });
-
-    /// <summary>
     /// Оптимизация Momentum
     /// </summary>
     [HttpPost("portfolio/momentum")]

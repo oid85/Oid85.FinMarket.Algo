@@ -83,7 +83,10 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
 
             double firstPrice = candlesFromTo.First().Close;
             double lastPrice = candlesFromTo.Last().Close;
- 
+
+            if (firstPrice == 0.0) return 0.0;
+            if (lastPrice == 0.0) return 0.0;
+
             return (lastPrice - firstPrice) / firstPrice * 100.0;
         }
     }

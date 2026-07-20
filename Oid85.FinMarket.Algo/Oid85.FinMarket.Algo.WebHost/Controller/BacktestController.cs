@@ -40,30 +40,6 @@ public class BacktestController(
             result => new BaseResponse<BacktestResponse> { Result = result });
 
     /// <summary>
-    /// Бэктест UltimateSmoother
-    /// </summary>
-    [HttpPost("portfolio/ultimate-smoother")]
-    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> BacktestUltimateSmootherAsync() =>
-        GetResponseAsync(
-            () => algoService.BacktestAsync(new() { PortfolioName = "UltimateSmoother" }),
-            result => new BaseResponse<BacktestResponse> { Result = result });
-
-    /// <summary>
-    /// Бэктест Supertrend
-    /// </summary>
-    [HttpPost("portfolio/supertrend")]
-    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> BacktestSupertrendAsync() =>
-        GetResponseAsync(
-            () => algoService.BacktestAsync(new() { PortfolioName = "Supertrend" }),
-            result => new BaseResponse<BacktestResponse> { Result = result });
-
-    /// <summary>
     /// Бэктест Momentum
     /// </summary>
     [HttpPost("portfolio/momentum")]
