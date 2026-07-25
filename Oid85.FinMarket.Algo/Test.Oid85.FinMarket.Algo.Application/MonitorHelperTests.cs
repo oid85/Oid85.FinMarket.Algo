@@ -50,4 +50,48 @@ public class MonitorHelperTests
         //Assert
         Assert.Equivalent(sut, expected);
     }
+
+    [Fact]
+    public void Merge_return_is_correct()
+    {
+        // Arrange
+        List<DateOnly> dates =
+                [
+                    DateOnly.Parse("2026.07.01"),
+                    DateOnly.Parse("2026.07.02"),
+                    DateOnly.Parse("2026.07.03")
+                ];
+
+        List<List<DateValue<int>>> data =
+            [
+                [
+                    new () { Date = DateOnly.Parse("2026.07.01"), Value = 0 },
+                    new () { Date = DateOnly.Parse("2026.07.02"), Value = 1 },
+                    new () { Date = DateOnly.Parse("2026.07.03"), Value = 1 }
+                ],
+                [
+                    new () { Date = DateOnly.Parse("2026.07.01"), Value = 0 },
+                    new () { Date = DateOnly.Parse("2026.07.02"), Value = 1 },
+                    new () { Date = DateOnly.Parse("2026.07.03"), Value = 0 }
+                ],
+                [
+                    new () { Date = DateOnly.Parse("2026.07.01"), Value = 1 },
+                    new () { Date = DateOnly.Parse("2026.07.02"), Value = 1 },
+                    new () { Date = DateOnly.Parse("2026.07.03"), Value = 0 }
+                ]
+            ];
+
+        // Act
+        List<DateValue<int>> expected =
+            [
+                new () { Date = DateOnly.Parse("2026.07.01"), Value = 1 },
+                new () { Date = DateOnly.Parse("2026.07.02"), Value = 3 },
+                new () { Date = DateOnly.Parse("2026.07.03"), Value = 1 }
+            ];
+
+        var sut = MonitorHelper.Merge(data, dates);
+
+        //Assert
+        Assert.Equivalent(sut, expected);
+    }
 }
