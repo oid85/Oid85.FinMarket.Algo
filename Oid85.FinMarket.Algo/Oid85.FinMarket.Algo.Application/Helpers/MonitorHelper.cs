@@ -56,7 +56,7 @@ namespace Oid85.FinMarket.Algo.Application.Helpers
                         Value = combineData.Where(x => x.Date == date).Sum(x => x.Value)
                     });
 
-            return result;
+            return [.. result.OrderBy(x => x.Date)];
         }
 
         public static List<DateValue<int>> Map(SortedDictionary<DateOnly, Position> positions, List<DateOnly> dates)
