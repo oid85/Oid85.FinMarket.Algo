@@ -95,7 +95,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     IsOptimization = false,
                     ProcessName = KnownProcessNames.Backtest
                 });
-            
+
             var from = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * 365));
             var to = DateOnly.FromDateTime(DateTime.Today);
             var dates = DateUtils.GetDates(from, to);

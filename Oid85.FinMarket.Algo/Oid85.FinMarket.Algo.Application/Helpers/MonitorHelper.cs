@@ -1,4 +1,5 @@
-﻿using Oid85.FinMarket.Algo.Core.Models;
+﻿using Oid85.FinMarket.Algo.Common.Utils;
+using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Helpers
 {
@@ -15,7 +16,7 @@ namespace Oid85.FinMarket.Algo.Application.Helpers
             {
                 var data = strategyExecuteResults
                     .Where(x => x.Ticker == ticker)
-                    .Select(x => FillEmptyDates(Map(x.DiagramPoints), dates))
+                    .Select(x => Map(x.Positions, dates))
                     .ToList();
 
                 result.Add(new (ticker, [.. Merge(data, dates).Select(x => new DateWeight { Date = x.Date, Weight = x.Value})]));
@@ -41,32 +42,6 @@ namespace Oid85.FinMarket.Algo.Application.Helpers
             return result;
         }
 
-        public static List<DateValue<int>> FillEmptyDates(List<DateValue<int>> dateValues, List<DateOnly> dates)
-        {
-            var result = new List<DateValue<int>>();
-
-            foreach (var date in dates)
-            {
-                var dateValue = dateValues.Find(x => x.Date == date);
-
-                if (dateValue is not null)
-                    result.Add(dateValue);
-
-                else
-                {
-                    dateValue = dateValues.FindLast(x => x.Date <= date);
-
-                    if (dateValue is not null)
-                        result.Add(new() { Date = date, Value = dateValue.Value });
-
-                    else
-                        result.Add(new() { Date = date, Value = 0 });
-                }
-            }
-
-            return result;
-        }
-
         public static List<DateValue<int>> Merge(List<List<DateValue<int>>> data, List<DateOnly> dates)
         {
             var result = new List<DateValue<int>>();
@@ -84,22 +59,24 @@ namespace Oid85.FinMarket.Algo.Application.Helpers
             return result;
         }
 
-        public static List<DateValue<int>> Map(List<DiagramPoint> diagramPoints)
+        public static List<DateValue<int>> Map(SortedDictionary<DateOnly, Position> positions, List<DateOnly> dates)
         {
-            var result = new List<DateValue<int>>();
+            var dictionary = dates.ToDictionary(k => k, v => 0);
 
-            foreach (var diagramPoint in diagramPoints)
+            foreach (var position in positions)
             {
-                var dateValue = new DateValue<int> { Date = diagramPoint.Date, Value = 0 };
+                var positionDates = position.Value.ExitDate.HasValue
+                    ? DateUtils.GetDates(position.Value.EntryDate, position.Value.ExitDate.Value)
+                    : DateUtils.GetDates(position.Value.EntryDate, dates.Last());
 
-                if (diagramPoint.PositionDirection.HasValue)
-                    if (diagramPoint.PositionDirection.Value == 1)
-                        dateValue.Value = 1;
-
-                result.Add(dateValue);
+                foreach (var date in positionDates)
+                {
+                    if (position.Value.IsLong) dictionary[date] = 1;
+                    if (position.Value.IsShort) dictionary[date] = -1;
+                }
             }
 
-            return [.. result.OrderBy(x => x.Date)];
+            return [.. dictionary.Select(x => new DateValue<int> { Date = x.Key, Value = x.Value}).OrderBy(x => x.Date)];
         }
     }
 }

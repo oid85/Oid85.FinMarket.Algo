@@ -4,11 +4,11 @@ public class Position
 {
     public string Ticker { get; set; } = string.Empty;
     public double EntryPrice { get; set; }
-    public double ExitPrice { get; set; }
+    public double? ExitPrice { get; set; } = null;
     public DateOnly EntryDate { get; set; }
-    public DateOnly ExitDate { get; set; }
+    public DateOnly? ExitDate { get; set; } = null;
     public int EntryCandleIndex { get; set; }
-    public int ExitCandleIndex { get; set; }
+    public int? ExitCandleIndex { get; set; } = null;
     public bool IsActive { get; set; }
     public bool IsLong { get; set; }
     public bool IsShort { get; set; }

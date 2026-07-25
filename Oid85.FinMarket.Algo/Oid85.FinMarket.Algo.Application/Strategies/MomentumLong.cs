@@ -3,9 +3,7 @@ using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Strategies
 {
-    public class MomentumLong(
-        IIndicatorFactory indicatorFactory) 
-        : Strategy
+    public class MomentumLong : Strategy
     {
         public override void Execute()
         {
@@ -47,13 +45,6 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
                 
                 // Отрисовка
                 DiagramPoints[i].Price = Candles[i].Close;
-
-                if (LastActivePosition is not null)
-                    if (LastActivePosition.IsActive)
-                    {
-                        if (LastActivePosition.IsLong) DiagramPoints[i].PositionDirection = 1;
-                        if (LastActivePosition.IsShort) DiagramPoints[i].PositionDirection = -1;
-                    }
             }
         }
 

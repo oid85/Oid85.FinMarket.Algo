@@ -6,7 +6,7 @@ namespace Test.Oid85.FinMarket.Algo.Application;
 public class MonitorHelperTests
 {
     [Fact]
-    public void FillEmptyDates_return_is_correct()
+    public void Map_Positions_return_is_correct()
     {
         // Arrange
         List<DateOnly> dates =
@@ -23,33 +23,31 @@ public class MonitorHelperTests
                     DateOnly.Parse("2026.07.10")
                 ];
 
-        List<DateValue<int>> dateValues =
-            [
-                new () { Date = DateOnly.Parse("2026.07.03"), Value = 1 },
-                new () { Date = DateOnly.Parse("2026.07.04"), Value = 1 },
-                new () { Date = DateOnly.Parse("2026.07.05"), Value = 1 },
-                new () { Date = DateOnly.Parse("2026.07.08"), Value = 0 },
-                new () { Date = DateOnly.Parse("2026.07.09"), Value = 1 }
-            ];
+        SortedDictionary<DateOnly, Position> positions = new()
+        {
+            { DateOnly.Parse("2026.07.02"), new() { IsActive = false, IsLong = true, IsShort = false, EntryDate = DateOnly.Parse("2026.07.02"), ExitDate = DateOnly.Parse("2026.07.04") } },
+            { DateOnly.Parse("2026.07.06"), new() { IsActive = false, IsLong = false, IsShort = true, EntryDate = DateOnly.Parse("2026.07.06"), ExitDate = DateOnly.Parse("2026.07.07") } },
+            { DateOnly.Parse("2026.07.09"), new() { IsActive = true, IsLong = true, IsShort = false, EntryDate = DateOnly.Parse("2026.07.09"), ExitDate = null } }
+        };
 
         // Act
         List<DateValue<int>> expected =
             [
                 new () { Date = DateOnly.Parse("2026.07.01"), Value = 0 },
-                new () { Date = DateOnly.Parse("2026.07.02"), Value = 0 },
+                new () { Date = DateOnly.Parse("2026.07.02"), Value = 1 },
                 new () { Date = DateOnly.Parse("2026.07.03"), Value = 1 },
                 new () { Date = DateOnly.Parse("2026.07.04"), Value = 1 },
-                new () { Date = DateOnly.Parse("2026.07.05"), Value = 1 },
-                new () { Date = DateOnly.Parse("2026.07.06"), Value = 1 },
-                new () { Date = DateOnly.Parse("2026.07.07"), Value = 1 },
+                new () { Date = DateOnly.Parse("2026.07.05"), Value = 0 },
+                new () { Date = DateOnly.Parse("2026.07.06"), Value = -1 },
+                new () { Date = DateOnly.Parse("2026.07.07"), Value = -1 },
                 new () { Date = DateOnly.Parse("2026.07.08"), Value = 0 },
                 new () { Date = DateOnly.Parse("2026.07.09"), Value = 1 },
                 new () { Date = DateOnly.Parse("2026.07.10"), Value = 1 }
             ];
 
-        var sut = MonitorHelper.FillEmptyDates(dateValues, dates);
+        var sut = MonitorHelper.Map(positions, dates);
 
-        // Assert
+        //Assert
         Assert.Equivalent(sut, expected);
-    }   
+    }
 }

@@ -34,6 +34,8 @@ public static class ApplicationMapper
             StrategyParamsHash = StringUtils.GetMd5(json),
             NumberPositions = strategy.NumberPositions,
             CurrentPosition = strategy.CurrentPosition,
+            LastActivePosition = strategy.LastActivePosition,
+            LastPosition = strategy.LastPosition,
             CurrentPositionCost = strategy.CurrentPositionCost,
             ProfitFactor = strategy.ProfitFactor,
             RecoveryFactor = strategy.RecoveryFactor,

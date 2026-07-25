@@ -143,11 +143,6 @@ public class StrategyExecuteResult
     public string ResultMessage { get; set; }
 
     /// <summary>
-    /// Позиции
-    /// </summary>
-    public List<Position> Positions { get; set; } = [];
-
-    /// <summary>
     /// Капитал
     /// </summary>
     public Dictionary<DateOnly, double> EqiutyCurve { get; set; } = [];
@@ -161,4 +156,19 @@ public class StrategyExecuteResult
     /// График
     /// </summary>
     public List<DiagramPoint> DiagramPoints { get; set; } = [];
+
+    /// <summary>
+    /// Позиции
+    /// </summary>
+    public SortedDictionary<DateOnly, Position> Positions { get; set; } = [];
+
+    /// <summary>
+    /// Последняя активная позиция
+    /// </summary>
+    public Position? LastActivePosition { get; set; } = null;
+
+    /// <summary>
+    /// Последняя позиция
+    /// </summary>
+    public Position? LastPosition { get; set; } = null;
 }

@@ -1,4 +1,6 @@
-﻿namespace Oid85.FinMarket.Algo.Core.Models;
+﻿using System.Collections.Generic;
+
+namespace Oid85.FinMarket.Algo.Core.Models;
 
 public class Strategy
 {
@@ -52,7 +54,7 @@ public class Strategy
     
     public List<StopLimit?> StopLimits { get; set; } = [];
 
-    public List<Position> Positions { get; set; } = [];
+    public SortedDictionary<DateOnly, Position> Positions { get; set; } = [];
 
     public int GetPositionSize(double orderPrice)
     {
@@ -75,7 +77,7 @@ public class Strategy
         }
     }
 
-    public Position? LastPosition => Positions.Count == 0 ? null : Positions.Last();
+    public Position? LastPosition => Positions.Count == 0 ? null : Positions.Last().Value;
     
     public int CurrentPosition
     {
@@ -132,49 +134,53 @@ public class Strategy
     private void AddTrade(Trade trade)
     {
         if (trade.Quantity == 0)
-            return;
-        
+            return;                
+
         if (LastActivePosition is null)
-            Positions.Add(new Position
-            {
-                Ticker = Ticker,
-                EntryPrice = trade.Price,
-                EntryDate = trade.Date,
-                EntryCandleIndex = trade.CandleIndex,
-                IsActive = true,
-                IsLong = trade.Quantity > 0,
-                IsShort = trade.Quantity < 0,
-                Quantity = trade.Quantity,
-                Cost = trade.Quantity * trade.Price
-            });
+            Positions.Add(
+                trade.Date, 
+                new()
+                {
+                    Ticker = Ticker,
+                    EntryPrice = trade.Price,
+                    EntryDate = trade.Date,
+                    EntryCandleIndex = trade.CandleIndex,
+                    IsActive = true,
+                    IsLong = trade.Quantity > 0,
+                    IsShort = trade.Quantity < 0,
+                    Quantity = trade.Quantity,
+                    Cost = trade.Quantity * trade.Price
+                });
 
         else
         {
             int count = Positions.Count;
 
-            Positions[count - 1].ExitPrice = trade.Price;
-            Positions[count - 1].ExitDate = trade.Date;
-            Positions[count - 1].ExitCandleIndex = trade.CandleIndex;
-            Positions[count - 1].IsActive = false;
+            var key = Positions.Last().Key;
+
+            Positions[key].ExitPrice = trade.Price;
+            Positions[key].ExitDate = trade.Date;
+            Positions[key].ExitCandleIndex = trade.CandleIndex;
+            Positions[key].IsActive = false;
 
             double profit = 0.0;
             
-            if (Positions[count - 1].IsLong)
-                profit = Math.Abs(Positions[count - 1].Quantity) * (Positions[count - 1].ExitPrice - Positions[count - 1].EntryPrice);
+            if (Positions[key].IsLong)
+                profit = Math.Abs(Positions[key].Quantity) * (Positions[key].ExitPrice!.Value - Positions[key].EntryPrice);
             
-            if (Positions[count - 1].IsShort)
-                profit = Math.Abs(Positions[count - 1].Quantity) * (Positions[count - 1].EntryPrice - Positions[count - 1].ExitPrice);            
+            if (Positions[key].IsShort)
+                profit = Math.Abs(Positions[key].Quantity) * (Positions[key].EntryPrice - Positions[key].ExitPrice!.Value);            
             
-            Positions[count - 1].NetProfit = profit;
-            Positions[count - 1].NetProfitPercent = profit / EndMoney * 100.0;
+            Positions[key].NetProfit = profit;
+            Positions[key].NetProfitPercent = profit / EndMoney * 100.0;
             
-            var totalProfit = Positions.Sum(x => x.NetProfit);
-            Positions[count - 1].TotalNetProfit = totalProfit;
-            Positions[count - 1].TotalProfitPct = totalProfit / EndMoney * 100.0;
+            var totalProfit = Positions.Sum(x => x.Value.NetProfit);
+            Positions[key].TotalNetProfit = totalProfit;
+            Positions[key].TotalProfitPct = totalProfit / EndMoney * 100.0;
             
             EndMoney += profit;
             
-            EqiutyCurve.TryAdd(Positions[count - 1].ExitDate, Positions[count - 1].TotalNetProfit);
+            EqiutyCurve.TryAdd(Positions[key].ExitDate!.Value, Positions[key].TotalNetProfit);
             
             double drawdown;
             
@@ -183,14 +189,14 @@ public class Strategy
 
             else
             {
-                var maxTotalProfit = Positions.Take(count - 1).Max(x => x.TotalNetProfit);
+                var maxTotalProfit = Positions.Take(count - 1).Max(x => x.Value.TotalNetProfit);
 
-                drawdown = Positions[count - 1].TotalNetProfit >= maxTotalProfit
+                drawdown = Positions[key].TotalNetProfit >= maxTotalProfit
                     ? 0.0
-                    : maxTotalProfit - Positions[count - 1].TotalNetProfit;
+                    : maxTotalProfit - Positions[key].TotalNetProfit;
             }
             
-            DrawdownCurve.TryAdd(Positions[count - 1].ExitDate, drawdown);
+            DrawdownCurve.TryAdd(Positions[key].ExitDate!.Value, drawdown);
         }
     }
 
@@ -242,10 +248,10 @@ public class Strategy
     {
         get
         {
-            if (Positions is []) return 0.0;
+            if (Positions.Count == 0) return 0.0;
 
-            double profits = Positions.Where(x => x.NetProfit > 0.0).Sum(x => x.NetProfit);
-            double losses = Positions.Where(x => x.NetProfit < 0.0).Sum(x => x.NetProfit);
+            double profits = Positions.Where(x => x.Value.NetProfit > 0.0).Sum(x => x.Value.NetProfit);
+            double losses = Positions.Where(x => x.Value.NetProfit < 0.0).Sum(x => x.Value.NetProfit);
 
             if (losses == 0.0) return double.PositiveInfinity;
             
@@ -255,13 +261,13 @@ public class Strategy
 
     public double RecoveryFactor => MaxDrawdown == 0.0 ? double.PositiveInfinity : TotalNetProfit / MaxDrawdown;
 
-    public double TotalNetProfit => Positions.Count == 0 ? 0.0 : Positions.Sum(x => x.NetProfit);
+    public double TotalNetProfit => Positions.Count == 0 ? 0.0 : Positions.Sum(x => x.Value.NetProfit);
 
-    public double AverageNetProfit => Positions.Count == 0 ? 0.0 : Positions.Select(x => x.NetProfit).Average();
+    public double AverageNetProfit => Positions.Count == 0 ? 0.0 : Positions.Select(x => x.Value.NetProfit).Average();
 
-    public double AverageNetProfitPercent => Positions.Count == 0 ? 0.0 : Positions.Select(x => x.NetProfitPercent).Average();
+    public double AverageNetProfitPercent => Positions.Count == 0 ? 0.0 : Positions.Select(x => x.Value.NetProfitPercent).Average();
 
-    public double Drawdown  => LastPosition is null ? 0.0 : Positions.Max(x => x.TotalNetProfit) - LastPosition.TotalNetProfit;
+    public double Drawdown  => LastPosition is null ? 0.0 : Positions.Max(x => x.Value.TotalNetProfit) - LastPosition.TotalNetProfit;
 
     public double MaxDrawdown  => DrawdownCurve.Count == 0 ? 0.0 : Math.Abs(DrawdownCurve.Max(x => x.Value));
 
@@ -269,7 +275,7 @@ public class Strategy
 
     public int NumberPositions => Positions.Count;
 
-    public int WinningPositions => Positions.Count == 0 ? 0 : Positions.Count(x => x.NetProfit > 0.0);
+    public int WinningPositions => Positions.Count == 0 ? 0 : Positions.Count(x => x.Value.NetProfit > 0.0);
 
     public double WinningTradesPercent => NumberPositions == 0.0 ? 0.0 : Convert.ToDouble(WinningPositions) / Convert.ToDouble(NumberPositions) * 100.0;    
     
