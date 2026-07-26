@@ -51,10 +51,10 @@ public static class ApplicationMapper
             EndMoney = strategy.EndMoney,
             TotalReturn = strategy.TotalReturn,
             AnnualYieldReturn = strategy.AnnualYieldReturn,
-            Positions = strategy.Positions,
-            EqiutyCurve = strategy.EqiutyCurve,
-            DrawdownCurve = strategy.DrawdownCurve,
-            DiagramPoints = strategy.DiagramPoints
+            Positions = new SortedDictionary<DateOnly, Position>(strategy.Positions),
+            EqiutyCurve = new Dictionary<DateOnly, double>(strategy.EqiutyCurve),
+            DrawdownCurve = new Dictionary<DateOnly, double>(strategy.DrawdownCurve),
+            DiagramPoints = [.. strategy.DiagramPoints]
         };
 
         return result;

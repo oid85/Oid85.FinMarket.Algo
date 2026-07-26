@@ -179,6 +179,15 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     });
             }
 
+            double sumPositions = result.Sum(x => x.Cost);
+
+            result.Add(
+                new()
+                {
+                    Ticker = KnownTickers.TMON,
+                    Cost = (money - sumPositions).RoundTo(2)
+                });
+
             return result;
         }
 

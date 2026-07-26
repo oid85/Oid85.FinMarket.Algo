@@ -70,10 +70,10 @@ public class Strategy
             if (LastPosition is null)
                 return null;
             
-            if (!LastPosition.IsActive)
-                return null;
+            if (LastPosition.IsActive)
+                return LastPosition;
 
-            return LastPosition;
+            return null;
         }
     }
 
@@ -114,22 +114,24 @@ public class Strategy
     }
     
     public void BuyAtPrice(int quantity, double price, int candleIndex) =>
-        AddTrade(new Trade
-        {
-            CandleIndex = candleIndex,
-            Quantity = Math.Abs(quantity),
-            Price = price,
-            Date = Candles[candleIndex].Date
-        });
+        AddTrade(
+            new()
+            {
+                CandleIndex = candleIndex,
+                Quantity = Math.Abs(quantity),
+                Price = price,
+                Date = Candles[candleIndex].Date
+            });
 
     public void SellAtPrice(int quantity, double price, int candleIndex) =>
-        AddTrade(new Trade
-        {
-            CandleIndex = candleIndex,
-            Quantity = -1 * Math.Abs(quantity),
-            Price = price,
-            Date = Candles[candleIndex].Date
-        });
+        AddTrade(
+            new()
+            {
+                CandleIndex = candleIndex,
+                Quantity = -1 * Math.Abs(quantity),
+                Price = price,
+                Date = Candles[candleIndex].Date
+            });
 
     private void AddTrade(Trade trade)
     {
