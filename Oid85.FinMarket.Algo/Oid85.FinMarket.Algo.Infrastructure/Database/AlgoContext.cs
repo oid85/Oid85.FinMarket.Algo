@@ -8,6 +8,7 @@ namespace Oid85.FinMarket.Algo.Infrastructure.Database;
 public class AlgoContext(DbContextOptions<AlgoContext> options) : DbContext(options)
 {
     public DbSet<StrategyExecuteResultEntity> StrategyExecuteResultEntities { get; set; }
+    public DbSet<ParameterEntity> ParameterEntities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

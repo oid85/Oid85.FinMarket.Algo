@@ -31,12 +31,12 @@ namespace Oid85.FinMarket.Algo.Application.Helpers
         {
             var result = new List<TickerWeight>();
 
-            foreach (var weightDataItem in weightData)
+            foreach (var (ticker, weight) in weightData)
                 result.Add(
                     new()
                     {
-                        Ticker = weightDataItem.Ticker,
-                        Weight = weightDataItem.WeightData.Find(x => x.Date == date)?.Weight ?? 0
+                        Ticker = ticker,
+                        Weight = weight.Find(x => x.Date == date)?.Weight ?? 0
                     });
 
             return result;

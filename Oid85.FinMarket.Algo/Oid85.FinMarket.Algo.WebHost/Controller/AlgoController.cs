@@ -41,7 +41,20 @@ public class AlgoController(
         GetResponseAsync(
             () => algoService.PortfolioListAsync(request),
             result => new BaseResponse<PortfolioListResponse> { Result = result });
-    /*
+
+    /// <summary>
+    /// Получить сумму портфеля
+    /// </summary>
+    [HttpPost("portfolio/total-sum/get")]
+    [ProducesResponseType(typeof(BaseResponse<GetPortfolioTotalSumResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetPortfolioTotalSumResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetPortfolioTotalSumResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> GetPortfolioTotalSumAsync(
+        [FromBody] GetPortfolioTotalSumRequest request) =>
+        GetResponseAsync(
+            () => algoService.GetPortfolioTotalSumAsync(request),
+            result => new BaseResponse<GetPortfolioTotalSumResponse> { Result = result });
+
     /// <summary>
     /// Редактировать сумму портфеля
     /// </summary>
@@ -53,6 +66,5 @@ public class AlgoController(
         [FromBody] EditPortfolioTotalSumRequest request) =>
         GetResponseAsync(
             () => algoService.EditPortfolioTotalSumAsync(request),
-            result => new BaseResponse<EditPortfolioTotalSumResponse> { Result = result });
-    */
+            result => new BaseResponse<EditPortfolioTotalSumResponse> { Result = result });    
 }

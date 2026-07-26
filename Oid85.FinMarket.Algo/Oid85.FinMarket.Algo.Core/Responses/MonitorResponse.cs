@@ -6,6 +6,9 @@
         public List<PositionWeightData> PositionWeightData { get; set; } = [];
         public List<PositionItem> CurrentPositions { get; set; } = [];
         public List<PortfolioBacktestSeries> Series { get; set; } = [];
+        public double Yield { get; set; }
+        public double MaxDrawdown { get; set; }
+        public double CurrentDrawdown { get; set; }
     }
 
     public class PositionWeightData

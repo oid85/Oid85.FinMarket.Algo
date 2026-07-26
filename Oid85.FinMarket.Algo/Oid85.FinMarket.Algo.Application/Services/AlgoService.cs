@@ -10,7 +10,6 @@ using Oid85.FinMarket.Algo.Core.Configuration;
 using Oid85.FinMarket.Algo.Core.Models;
 using Oid85.FinMarket.Algo.Core.Requests;
 using Oid85.FinMarket.Algo.Core.Responses;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Oid85.FinMarket.Algo.Application.Services
 {
@@ -19,6 +18,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
         IMonitorService monitorService,
         IOptions<AlgoSettings> options,
         IStrategyExecuteResultRepository strategyExecuteResultRepository,
+        IParameterRepository parameterRepository,
         IServiceProvider serviceProvider)
         : IAlgoService
     {
@@ -121,9 +121,71 @@ namespace Oid85.FinMarket.Algo.Application.Services
             var instrumentData = await dataService.GetInstrumentDataAsync(tickers);
             var lots = instrumentData.ToDictionary(k => k.Key, v => v.Value.Lot ?? 1);
 
-            response.CurrentPositions = GetCurrentPositions(portfolioData.PositionWeightData, portfolioSettings!.Money, strategyExecuteResults.Count, lots);
+            var totalSumResponse = await GetPortfolioTotalSumAsync(new() { PortfolioName = request.PortfolioName });
+
+            response.CurrentPositions = GetCurrentPositions(
+                portfolioData.PositionWeightData,
+                totalSumResponse.TotalSum, 
+                strategyExecuteResults.Count, 
+                lots);
+
+            response.Yield = GetAverageYearYieldPercent(response.Series[0]);
+
+            var drawdownValues = GetDrawdownValues(response.Series[0]);
+
+            response.MaxDrawdown = drawdownValues.Min();
+            response.CurrentDrawdown = drawdownValues.Last();
 
             return response;
+        }
+
+        private static double GetAverageYearYieldPercent(PortfolioBacktestSeries series)
+        {
+            double first = series.Data.First().Value ?? 0.0;
+            double last = series.Data.Last().Value ?? 0.0;
+
+            if (last == 0.0) return 0.0;
+
+            var startDate = series.Data.First().Date;
+            var endDate = series.Data.Last().Date;
+
+            var years = (endDate.ToDateTime(TimeOnly.MinValue) - startDate.ToDateTime(TimeOnly.MaxValue)).TotalDays / 365.0;
+
+            return ((last - first) / first * 100.0 / years).RoundTo(2);
+        }
+
+        private static List<double> GetDrawdownValues(PortfolioBacktestSeries series)
+        {
+            List<double> equity = [.. series.Data.Select(x => x.Value ?? 0.0)];
+            List<double> drawdown = [];
+
+            for (int i = 0; i < equity.Count; i++)
+            {
+                if (i == 0)
+                    drawdown.Add(0.0);
+
+                else
+                {
+                    var maxEquity = equity.Take(i).Max();
+                    drawdown.Add(equity[i] >= maxEquity ? 0.0 : ((equity[i] - maxEquity) / maxEquity * 100.0).RoundTo(2));
+                }
+            }
+
+            return drawdown;
+        }
+
+        /// <inheritdoc />
+        public async Task<GetPortfolioTotalSumResponse> GetPortfolioTotalSumAsync(GetPortfolioTotalSumRequest request)
+        {
+            double totalSum = Convert.ToDouble(((await parameterRepository.GetParameterValueAsync($"TotalSum:{request.PortfolioName}")) ?? "0").Replace(" ", "").Trim());
+            return new() { PortfolioName = request.PortfolioName , TotalSum = totalSum };
+        }
+
+        /// <inheritdoc />
+        public async Task<EditPortfolioTotalSumResponse> EditPortfolioTotalSumAsync(EditPortfolioTotalSumRequest request)
+        {
+            await parameterRepository.SetParameterValueAsync($"TotalSum:{request.PortfolioName}", request.TotalSum.ToString("N0"));
+            return new();
         }
 
         private static List<PositionWeightData> GetPositionWeightData(List<(string Ticker, List<DateWeight> WeightData)> positionWeightData) =>
