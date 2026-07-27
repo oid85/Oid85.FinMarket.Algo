@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Oid85.FinMarket.Algo.Application.Helpers;
 using Oid85.FinMarket.Algo.Application.Interfaces.Services;
 using Oid85.FinMarket.Algo.Common.KnownConstants;

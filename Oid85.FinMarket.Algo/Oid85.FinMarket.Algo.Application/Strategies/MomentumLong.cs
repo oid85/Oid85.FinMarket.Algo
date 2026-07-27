@@ -1,9 +1,13 @@
-﻿using Oid85.FinMarket.Algo.Application.Interfaces.Factories;
+﻿using System.Text.Json;
+using Microsoft.Extensions.Caching.Memory;
+using Oid85.FinMarket.Algo.Common.Utils;
 using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Strategies
 {
-    public class MomentumLong : Strategy
+    public class MomentumLong(
+        IMemoryCache memoryCache) 
+        : Strategy
     {
         public override void Execute()
         {
@@ -50,6 +54,11 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
 
         private List<string> GetTopTickers(DateOnly date, int period, int percent)
         {
+            string key = StringUtils.GetMd5($"GetTopTickers_{date}_{period}_{percent}");
+
+            if (memoryCache.TryGetValue(key, out List<string>? cacheTopTickers))
+                return cacheTopTickers ?? [];
+
             DateOnly from = date.AddDays(-1 * period);
             DateOnly to = date;
 
@@ -62,6 +71,8 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
                 .Take(count)
                 .Select(x => x.Key)
                 .ToList();
+
+            memoryCache.Set(key, topTickers, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(60)));
 
             return topTickers ?? [];
         }
