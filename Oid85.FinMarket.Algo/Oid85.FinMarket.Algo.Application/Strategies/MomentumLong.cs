@@ -15,17 +15,19 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
             int period = Parameters["Period"];
             int percent = Parameters["Percent"];
 
-            var tickers = CandleData.Keys.ToList();
-
             for (int i = StabilizationPeriod; i < Candles.Count - 1; i++)
             {
+                // Торгуем только в начале месяца
+                if (Candles[i].Date.Month != Candles[i - 1].Date.Month + 1)
+                    continue;
+
                 var topTickers = GetTopTickers(Candles[i].Date, period, percent);
 
                 bool tickerInTop = topTickers.Contains(Ticker);
 
                 // Правило входа
                 SignalLong = tickerInTop;
-                
+
                 // Правило выхода
                 SignalCloseLong = !tickerInTop;
 

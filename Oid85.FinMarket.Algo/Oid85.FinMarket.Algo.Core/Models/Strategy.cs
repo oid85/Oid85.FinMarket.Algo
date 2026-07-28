@@ -49,7 +49,7 @@ public class Strategy
     public bool SignalCloseLong { get; set; }
     
     public bool SignalCloseShort { get; set; }
-    
+
     public List<StopLimit?> StopLimits { get; set; } = [];
 
     public SortedDictionary<DateOnly, Position> Positions { get; set; } = [];

@@ -22,5 +22,6 @@ public static class ServiceCollectionExtensions
         services.AddKeyedTransient<Strategy, UltimateSmootherInclinationLong>("UltimateSmootherInclinationLong");
         services.AddKeyedTransient<Strategy, SupertrendLong>("SupertrendLong");
         services.AddKeyedTransient<Strategy, MomentumLong>("MomentumLong");
+        services.AddKeyedTransient<Strategy, HmaInclinationLong>("HmaInclinationLong");
     }
 }
