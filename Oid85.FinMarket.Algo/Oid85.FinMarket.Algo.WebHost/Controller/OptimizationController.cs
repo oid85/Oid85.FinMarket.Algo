@@ -50,4 +50,16 @@ public class OptimizationController(
         GetResponseAsync(
             () => algoService.OptimizationAsync(new() { PortfolioName = "Momentum" }),
             result => new BaseResponse<OptimizationResponse> { Result = result });
+
+    /// <summary>
+    /// Оптимизация HMA
+    /// </summary>
+    [HttpPost("portfolio/hma")]
+    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> OptimizationHmaAsync() =>
+        GetResponseAsync(
+            () => algoService.OptimizationAsync(new() { PortfolioName = "HMA" }),
+            result => new BaseResponse<OptimizationResponse> { Result = result });
 }

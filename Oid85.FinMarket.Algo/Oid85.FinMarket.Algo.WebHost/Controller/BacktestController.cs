@@ -50,4 +50,16 @@ public class BacktestController(
         GetResponseAsync(
             () => algoService.BacktestAsync(new() { PortfolioName = "Momentum" }),
             result => new BaseResponse<BacktestResponse> { Result = result });
+
+    /// <summary>
+    /// Бэктест HMA
+    /// </summary>
+    [HttpPost("portfolio/hma")]
+    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> BacktestHmaAsync() =>
+        GetResponseAsync(
+            () => algoService.BacktestAsync(new() { PortfolioName = "HMA" }),
+            result => new BaseResponse<BacktestResponse> { Result = result });
 }
