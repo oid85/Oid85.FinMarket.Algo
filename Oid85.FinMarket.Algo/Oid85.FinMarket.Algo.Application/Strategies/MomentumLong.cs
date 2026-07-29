@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Oid85.FinMarket.Algo.Common.Utils;
 using Oid85.FinMarket.Algo.Core.Models;
 
