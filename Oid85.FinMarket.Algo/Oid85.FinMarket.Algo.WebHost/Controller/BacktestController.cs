@@ -52,14 +52,14 @@ public class BacktestController(
             result => new BaseResponse<BacktestResponse> { Result = result });
 
     /// <summary>
-    /// Бэктест HMA
+    /// Бэктест Test
     /// </summary>
-    [HttpPost("portfolio/hma")]
+    [HttpPost("portfolio/test")]
     [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status500InternalServerError)]
     public Task<IActionResult> BacktestHmaAsync() =>
         GetResponseAsync(
-            () => algoService.BacktestAsync(new() { PortfolioName = "HMA" }),
+            () => algoService.BacktestAsync(new() { PortfolioName = "Test" }),
             result => new BaseResponse<BacktestResponse> { Result = result });
 }

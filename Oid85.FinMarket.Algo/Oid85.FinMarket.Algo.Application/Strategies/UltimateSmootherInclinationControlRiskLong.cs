@@ -3,7 +3,7 @@ using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Strategies
 {
-    public class UltimateSmootherInclinationLong(
+    public class UltimateSmootherInclinationControlRiskLong(
         IIndicatorFactory indicatorFactory)
         : Strategy
     {
@@ -43,6 +43,19 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
                 
                 else
                 {
+                    // Расчет риска
+                    double profit = Math.Abs(LastActivePosition.Quantity) * (Candles[i].Close - LastActivePosition.EntryPrice);
+
+                    // Если убыток
+                    if (profit < 0)
+                    {
+                        double lossPercent = Math.Abs(profit / EndMoney * 100.0);
+
+                        // При превышении риска закрываем позицию
+                        if (lossPercent >= 2.0)
+                            SignalCloseLong = true;
+                    }
+
                     if (SignalCloseLong)
                         SellAtPrice(positionSize, orderPrice, i + 1);
                 }

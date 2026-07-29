@@ -52,14 +52,14 @@ public class OptimizationController(
             result => new BaseResponse<OptimizationResponse> { Result = result });
 
     /// <summary>
-    /// Оптимизация HMA
+    /// Оптимизация Test
     /// </summary>
-    [HttpPost("portfolio/hma")]
+    [HttpPost("portfolio/test")]
     [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status500InternalServerError)]
     public Task<IActionResult> OptimizationHmaAsync() =>
         GetResponseAsync(
-            () => algoService.OptimizationAsync(new() { PortfolioName = "HMA" }),
+            () => algoService.OptimizationAsync(new() { PortfolioName = "Test" }),
             result => new BaseResponse<OptimizationResponse> { Result = result });
 }
