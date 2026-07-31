@@ -7,12 +7,10 @@ namespace Oid85.FinMarket.Algo.Common.Utils;
 public static class StringUtils
 {
     public static string Base64Encode(string text) =>
-        Convert.ToBase64String(
-            Encoding.UTF8.GetBytes(text));
+        Convert.ToBase64String(Encoding.UTF8.GetBytes(text));
 
     public static string Base64Decode(string base64) =>
-        Encoding.UTF8.GetString(
-            Convert.FromBase64String(base64));
+        Encoding.UTF8.GetString(Convert.FromBase64String(base64));
 
     public static string GetMd5(string input)
     {
