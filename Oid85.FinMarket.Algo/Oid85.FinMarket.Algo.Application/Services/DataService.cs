@@ -14,7 +14,14 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
         public async Task<Dictionary<string, List<Candle>>> GetCandleDataAsync(List<string> tickers)
         {
-            if (_candleData is not null) return _candleData;
+            if (_candleData is not null)
+            {
+                foreach (var ticker in tickers)                
+                    if (!_candleData.ContainsKey(ticker))
+                        _candleData.Add(ticker, await GetCandlesByTickerAsync(ticker));
+                
+                return _candleData;
+            }
 
             _candleData = [];
 
@@ -28,7 +35,9 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
         public async Task<Dictionary<string, Instrument>> GetInstrumentDataAsync(List<string> tickers)
         {
-            if (_instrumentData is not null) return _instrumentData;
+            if (_instrumentData is not null)
+                if (tickers.All(x => _instrumentData.ContainsKey(x)))
+                    return _instrumentData;
 
             _instrumentData = (await storageApiClient.GetInstrumentListAsync(new())).Result.Instruments
                 .Where(x => tickers.Distinct().Contains(x.Ticker))
