@@ -1,12 +1,15 @@
-﻿using Oid85.FinMarket.Algo.Application.Interfaces.ApiClients;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Oid85.FinMarket.Algo.Application.Interfaces.ApiClients;
 using Oid85.FinMarket.Algo.Application.Interfaces.Services;
 using Oid85.FinMarket.Algo.Common.KnownConstants;
+using Oid85.FinMarket.Algo.Common.Utils;
 using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Services
 {
     public class DataService(
-        IStorageApiClient storageApiClient) 
+        IStorageApiClient storageApiClient,
+        IMemoryCache memoryCache) 
         : IDataService
     {
         private Dictionary<string, List<Candle>>? _candleData = null;
@@ -54,6 +57,31 @@ namespace Oid85.FinMarket.Algo.Application.Services
             return _instrumentData;
         }
 
+        public List<string> GetMomentumTopTickers(Dictionary<string, List<Candle>> candleData, DateOnly date, int period, int percent)
+        {
+            string key = $"GetMomentumTopTickers:{date}:{period}:{percent}";
+
+            if (memoryCache.TryGetValue(key, out List<string>? cacheTopTickers))
+                return cacheTopTickers ?? [];
+
+            DateOnly from = date.AddDays(-1 * period);
+            DateOnly to = date;
+
+            int count = Convert.ToInt32(Math.Truncate(candleData.Count * percent / 100.0));
+
+            var topTickers = candleData
+                .ToDictionary(k => k.Key, v => GetDeltaPricePercent(v.Value, from, to))
+                .Where(x => x.Value > 0)
+                .OrderByDescending(x => x.Value)
+                .Take(count)
+                .Select(x => x.Key)
+                .ToList();
+
+            memoryCache.Set(key, topTickers, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(60)));
+
+            return topTickers ?? [];
+        }
+
         public double? GetPrice(string ticker, DateOnly date)
         {
             if (_candleData is null) return null;
@@ -99,6 +127,24 @@ namespace Oid85.FinMarket.Algo.Application.Services
             for (int i = 0; i < candles.Count; i++) candles[i].Index = i;
 
             return candles;
+        }
+
+        private static double GetDeltaPricePercent(List<Candle> candles, DateOnly from, DateOnly to)
+        {
+            var filteredCandles = candles
+                .Where(x => x.Date >= from)
+                .Where(x => x.Date <= to)
+                .ToList();
+
+            if (filteredCandles is []) return 0.0;
+
+            double firstPrice = filteredCandles.First().Close;
+            double lastPrice = filteredCandles.Last().Close;
+
+            if (firstPrice == 0.0) return 0.0;
+            if (lastPrice == 0.0) return 0.0;
+
+            return (lastPrice - firstPrice) / firstPrice * 100.0;
         }
     }
 }
