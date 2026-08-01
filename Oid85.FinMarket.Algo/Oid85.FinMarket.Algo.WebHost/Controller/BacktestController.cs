@@ -28,27 +28,27 @@ public class BacktestController(
             result => new BaseResponse<BacktestResponse> { Result = result });
 
     /// <summary>
-    /// Бэктест Trend
+    /// Бэктест Trend_Life
     /// </summary>
-    [HttpPost("portfolio/trend")]
+    [HttpPost("portfolio/trend-life")]
     [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> BacktestTrendAsync() =>
+    public Task<IActionResult> BacktestTrendLifeAsync() =>
         GetResponseAsync(
-            () => algoService.BacktestAsync(new() { PortfolioName = "Trend" }),
+            () => algoService.BacktestAsync(new() { PortfolioName = "Trend_Life" }),
             result => new BaseResponse<BacktestResponse> { Result = result });
 
     /// <summary>
-    /// Бэктест Momentum
+    /// Бэктест Momentum_Life
     /// </summary>
-    [HttpPost("portfolio/momentum")]
+    [HttpPost("portfolio/momentum-life")]
     [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> BacktestMomentumAsync() =>
+    public Task<IActionResult> BacktestMomentumLifeAsync() =>
         GetResponseAsync(
-            () => algoService.BacktestAsync(new() { PortfolioName = "Momentum" }),
+            () => algoService.BacktestAsync(new() { PortfolioName = "Momentum_Life" }),
             result => new BaseResponse<BacktestResponse> { Result = result });
 
     /// <summary>
@@ -61,5 +61,17 @@ public class BacktestController(
     public Task<IActionResult> BacktestHmaAsync() =>
         GetResponseAsync(
             () => algoService.BacktestAsync(new() { PortfolioName = "Test" }),
+            result => new BaseResponse<BacktestResponse> { Result = result });
+
+    /// <summary>
+    /// Бэктест Momentum
+    /// </summary>
+    [HttpPost("portfolio/momentum")]
+    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<BacktestResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> BacktestMomentumAsync() =>
+        GetResponseAsync(
+            () => algoService.BacktestAsync(new() { PortfolioName = "Momentum" }),
             result => new BaseResponse<BacktestResponse> { Result = result });
 }
