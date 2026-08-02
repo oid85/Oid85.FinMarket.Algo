@@ -52,18 +52,6 @@ public class OptimizationController(
             result => new BaseResponse<OptimizationResponse> { Result = result });
 
     /// <summary>
-    /// Оптимизация Test
-    /// </summary>
-    [HttpPost("portfolio/test")]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status500InternalServerError)]
-    public Task<IActionResult> OptimizationHmaAsync() =>
-        GetResponseAsync(
-            () => algoService.OptimizationAsync(new() { PortfolioName = "Test" }),
-            result => new BaseResponse<OptimizationResponse> { Result = result });
-
-    /// <summary>
     /// Оптимизация Momentum
     /// </summary>
     [HttpPost("portfolio/momentum")]
@@ -73,5 +61,17 @@ public class OptimizationController(
     public Task<IActionResult> OptimizationMomentumAsync() =>
         GetResponseAsync(
             () => algoService.OptimizationAsync(new() { PortfolioName = "Momentum" }),
+            result => new BaseResponse<OptimizationResponse> { Result = result });
+
+    /// <summary>
+    /// Оптимизация NormalizedMomentum
+    /// </summary>
+    [HttpPost("portfolio/normalized-momentum")]
+    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<OptimizationResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> OptimizationNormalizedMomentumAsync() =>
+        GetResponseAsync(
+            () => algoService.OptimizationAsync(new() { PortfolioName = "NormalizedMomentum" }),
             result => new BaseResponse<OptimizationResponse> { Result = result });
 }
