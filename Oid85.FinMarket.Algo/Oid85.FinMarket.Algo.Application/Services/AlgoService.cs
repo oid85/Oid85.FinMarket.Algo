@@ -507,6 +507,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
             var strategyExecuteResults = (await strategyExecuteResultRepository.GetFilteredAsync())
                 .Where(x => x.PortfolioName == portfolioName)
                 .Where(x => x.StrategyName == strategyName)
+				.Where(x => x.ProcessName == KnownProcessNames.Optimization)
                 .Where(x => x.Ticker == ticker)
                 .ToList();
 
