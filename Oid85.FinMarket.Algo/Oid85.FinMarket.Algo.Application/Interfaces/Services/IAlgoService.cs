@@ -39,5 +39,10 @@ namespace Oid85.FinMarket.Algo.Application.Interfaces.Services
         /// Редактировать сумму портфеля
         /// </summary>
         Task<EditPortfolioTotalSumResponse> EditPortfolioTotalSumAsync(EditPortfolioTotalSumRequest request);
+
+        /// <summary>
+        /// Получить результаты бэктеста
+        /// </summary>
+        Task<GetBacktestResultListResponse> GetBacktestResultListAsync(GetBacktestResultListRequest request);
     }
 }

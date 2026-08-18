@@ -139,6 +139,39 @@ namespace Oid85.FinMarket.Algo.Application.Services
             return response;
         }
 
+        /// <inheritdoc />
+        public async Task<GetBacktestResultListResponse> GetBacktestResultListAsync(GetBacktestResultListRequest request)
+        {
+            var algoSettings = options.Value;
+
+            if (string.IsNullOrEmpty(request.PortfolioName))
+                request.PortfolioName = algoSettings.Portfolios.First().Name;
+
+            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == request.PortfolioName);
+
+            if (string.IsNullOrEmpty(request.StrategyName))
+                request.StrategyName = portfolioSettings!.PortfolioStrategies.First().Name;
+
+            var strategyExecuteResults = await strategyExecuteResultRepository.GetAsync(
+                request.PortfolioName, request.StrategyName, KnownProcessNames.Backtest);
+
+            return new GetBacktestResultListResponse
+            {
+                Items = [.. strategyExecuteResults
+                .Select(x =>
+                new BacktestResultItem
+                {
+                    Ticker = x.Ticker,
+                    PortfolioName = x.PortfolioName,
+                    StrategyName = x.StrategyName,
+                    StrategyParams = x.StrategyParams,
+                    StrategyParamsHash = x.StrategyParamsHash,
+                    ProfitFactor = x.ProfitFactor.RoundTo(2),
+                    RecoveryFactor = x.RecoveryFactor.RoundTo(2)
+                })]
+            };
+        }
+
         private static double GetAverageYearYieldPercent(PortfolioBacktestSeries series)
         {
             double first = series.Data.First().Value ?? 0.0;

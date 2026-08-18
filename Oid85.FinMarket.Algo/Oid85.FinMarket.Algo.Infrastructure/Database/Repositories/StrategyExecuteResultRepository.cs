@@ -36,6 +36,23 @@ namespace Oid85.FinMarket.Algo.Infrastructure.Database.Repositories
             await context.SaveChangesAsync();
         }
 
+        public async Task<List<StrategyExecuteResult>> GetAsync(string portfolioName, string strategyName, string processName)
+        {
+            await using var context = await contextFactory.CreateDbContextAsync();
+
+            var queryableEntities = context.StrategyExecuteResultEntities.AsQueryable();
+
+            queryableEntities = queryableEntities.Where(x => x.ProcessName == processName);
+            queryableEntities = queryableEntities.Where(x => x.PortfolioName == portfolioName);
+            queryableEntities = queryableEntities.Where(x => x.StrategyName == strategyName);
+
+            var entities = await queryableEntities.AsNoTracking().ToListAsync();
+
+            var models = entities.Select(Map).ToList();
+
+            return models;
+        }
+
         public async Task<List<StrategyExecuteResult>> GetFilteredAsync()
         {
             var algoSettings = options.Value;
