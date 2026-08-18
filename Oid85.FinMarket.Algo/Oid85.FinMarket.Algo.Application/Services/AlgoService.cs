@@ -273,6 +273,22 @@ namespace Oid85.FinMarket.Algo.Application.Services
             };
         }
 
+        /// <inheritdoc />
+        public async Task<StrategyListResponse> StrategyListAsync(StrategyListRequest request)
+        {
+            var algoSettings = options.Value;
+
+            if (string.IsNullOrEmpty(request.PortfolioName))
+                request.PortfolioName = algoSettings.Portfolios.First().Name;
+
+            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == request.PortfolioName);
+
+            return new StrategyListResponse
+            {
+                Items = [.. portfolioSettings!.PortfolioStrategies.Select(x => new StrategyListItem { Name = x.Name })]
+            };
+        }
+
         /// <summary>
         /// Выполнить стратегии портфеля
         /// </summary>

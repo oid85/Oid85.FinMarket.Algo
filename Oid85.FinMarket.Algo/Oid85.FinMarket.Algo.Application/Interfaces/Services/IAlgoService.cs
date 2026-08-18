@@ -26,6 +26,11 @@ namespace Oid85.FinMarket.Algo.Application.Interfaces.Services
         Task<PortfolioListResponse> PortfolioListAsync(PortfolioListRequest request);
 
         /// <summary>
+        /// Список стратегий
+        /// </summary>
+        Task<StrategyListResponse> StrategyListAsync(StrategyListRequest request);
+
+        /// <summary>
         /// Получить сумму портфеля
         /// </summary>
         Task<GetPortfolioTotalSumResponse> GetPortfolioTotalSumAsync(GetPortfolioTotalSumRequest request);

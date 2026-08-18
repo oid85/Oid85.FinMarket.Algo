@@ -43,6 +43,19 @@ public class AlgoController(
             result => new BaseResponse<PortfolioListResponse> { Result = result });
 
     /// <summary>
+    /// Список стратегий портфеля
+    /// </summary>
+    [HttpPost("portfolio/strategy/list")]
+    [ProducesResponseType(typeof(BaseResponse<StrategyListResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<StrategyListResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<StrategyListResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> StrategyListAsync(
+        [FromBody] StrategyListRequest request) =>
+        GetResponseAsync(
+            () => algoService.StrategyListAsync(request),
+            result => new BaseResponse<StrategyListResponse> { Result = result });
+
+    /// <summary>
     /// Получить сумму портфеля
     /// </summary>
     [HttpPost("portfolio/total-sum/get")]
