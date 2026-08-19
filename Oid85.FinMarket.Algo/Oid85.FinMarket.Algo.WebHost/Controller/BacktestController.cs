@@ -29,7 +29,7 @@ public class BacktestController(
             result => new BaseResponse<BacktestResponse> { Result = result });
 
     /// <summary>
-    /// Результат бэктеста
+    /// Результаты бэктеста
     /// </summary>
     [HttpPost("portfolio/result/list")]
     [ProducesResponseType(typeof(BaseResponse<GetBacktestResultListResponse>), StatusCodes.Status200OK)]
@@ -40,4 +40,17 @@ public class BacktestController(
         GetResponseAsync(
             () => algoService.GetBacktestResultListAsync(request),
             result => new BaseResponse<GetBacktestResultListResponse> { Result = result });
+
+    /// <summary>
+    /// Результат бэктеста
+    /// </summary>
+    [HttpPost("portfolio/result")]
+    [ProducesResponseType(typeof(BaseResponse<GetBacktestResultResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BaseResponse<GetBacktestResultResponse>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BaseResponse<GetBacktestResultResponse>), StatusCodes.Status500InternalServerError)]
+    public Task<IActionResult> GetBacktestResultAsync(
+        [FromBody] GetBacktestResultRequest request) =>
+        GetResponseAsync(
+            () => algoService.GetBacktestResultAsync(request),
+            result => new BaseResponse<GetBacktestResultResponse> { Result = result });
 }

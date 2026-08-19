@@ -44,5 +44,10 @@ namespace Oid85.FinMarket.Algo.Application.Interfaces.Services
         /// Получить результаты бэктеста
         /// </summary>
         Task<GetBacktestResultListResponse> GetBacktestResultListAsync(GetBacktestResultListRequest request);
+
+        /// <summary>
+        /// Получить диаграмму бэктеста
+        /// </summary>
+        Task<GetBacktestResultResponse> GetBacktestResultAsync(GetBacktestResultRequest request);
     }
 }

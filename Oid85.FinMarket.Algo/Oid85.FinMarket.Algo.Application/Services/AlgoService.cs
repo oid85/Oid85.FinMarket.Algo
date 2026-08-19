@@ -172,6 +172,64 @@ namespace Oid85.FinMarket.Algo.Application.Services
             };
         }
 
+        /// <inheritdoc />
+        public async Task<GetBacktestResultResponse> GetBacktestResultAsync(GetBacktestResultRequest request)
+        {
+            var algoSettings = options.Value;
+
+            if (string.IsNullOrEmpty(request.PortfolioName))
+                request.PortfolioName = algoSettings.Portfolios.First().Name;
+
+            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == request.PortfolioName);
+
+            if (string.IsNullOrEmpty(request.StrategyName))
+                request.StrategyName = portfolioSettings!.PortfolioStrategies.First().Name;
+
+            var strategyExecuteResults = await ExecuteAsync(
+                new()
+                {
+                    PortfolioName = request.PortfolioName,
+                    IsOptimization = false,
+                    ProcessName = KnownProcessNames.Backtest
+                },
+                request.StrategyName,
+                request.Ticker);
+
+            var strategyExecuteResult = strategyExecuteResults.Find(x => x.StrategyParamsHash == request.StrategyParamsHash);
+
+            if (strategyExecuteResult is null)
+                return new();
+
+            var response = new GetBacktestResultResponse
+            {
+                Price = new BacktestResultSeries
+                {
+                    Name = "Цена",
+                    Color = KnownColors.Blue,
+                    ColorFill = KnownColors.Blue,
+                    Data = [.. strategyExecuteResult.DiagramPoints.Select(x => new PortfolioBacktestSeriesItem { Date = x.Date, Value = x.Price })]
+                },
+
+                Equity = new BacktestResultSeries
+                {
+                    Name = "Капитал",
+                    Color = KnownColors.Green,
+                    ColorFill = KnownColors.Green,
+                    Data = [.. strategyExecuteResult.EqiutyCurve.Select(x => new PortfolioBacktestSeriesItem { Date = x.Key, Value = x.Value })]
+                },
+
+                Drawdown = new BacktestResultSeries
+                {
+                    Name = "Просадка",
+                    Color = KnownColors.Red,
+                    ColorFill = KnownColors.Red,
+                    Data = [.. strategyExecuteResult.DrawdownCurve.Select(x => new PortfolioBacktestSeriesItem { Date = x.Key, Value = x.Value })]
+                }
+            };
+
+            return response;
+        }
+
         private static double GetAverageYearYieldPercent(PortfolioBacktestSeries series)
         {
             double first = series.Data.First().Value ?? 0.0;
@@ -341,6 +399,47 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 var strategy = strategyData[portfolioStrategySettings.Name];
 
                 foreach (var ticker in tickers)
+                {
+                    strategy.Ticker = ticker;
+                    strategy.CandleData = candleData;
+                    strategy.PortfolioName = portfolioSettings.Name;
+                    strategy.StabilizationPeriod = algoSettings.BacktestSettings.StabilizationPeriodInCandles;
+                    strategy.ProcessName = request.ProcessName!;
+
+                    if (strategy.Candles is []) continue;
+
+                    var parameterSets = request.IsOptimization
+                        ? GetParameterSets(strategySettings!.StrategyParameters)
+                        : await GetParameterSets(portfolioSettings.Name, strategySettings!.Name, ticker);
+
+                    var results = Execute(strategy, parameterSets);
+
+                    strategyExecuteResults.AddRange(results);
+                }
+            }
+
+            return strategyExecuteResults;
+        }
+
+        /// <summary>
+        /// Выполнить стратегии портфеля
+        /// </summary>
+        private async Task<List<StrategyExecuteResult>> ExecuteAsync(StrategyExecuteRequest request, string strategyName, string tickerName)
+        {
+            var strategyExecuteResults = new List<StrategyExecuteResult>();
+
+            var algoSettings = options.Value;
+            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == request.PortfolioName);
+            var tickers = algoSettings.TickerLists.Find(x => x.Name == portfolioSettings!.TickerList)!.Tickers;
+            var candleData = await GetCandleDataAsync(request.IsOptimization, tickers);
+            var strategyData = GetStrategyData();
+
+            foreach (var portfolioStrategySettings in portfolioSettings!.PortfolioStrategies.Where(x => x.Name == strategyName))
+            {
+                var strategySettings = algoSettings.Strategies.Find(x => x.Name == portfolioStrategySettings.Name);
+                var strategy = strategyData[portfolioStrategySettings.Name];
+
+                foreach (var ticker in tickers.Where(x => x == tickerName))
                 {
                     strategy.Ticker = ticker;
                     strategy.CandleData = candleData;
