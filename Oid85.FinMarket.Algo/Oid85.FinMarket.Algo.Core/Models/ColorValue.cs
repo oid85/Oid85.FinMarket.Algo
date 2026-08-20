@@ -1,11 +1,11 @@
 ﻿namespace Oid85.FinMarket.Algo.Core.Models
 {
     /// <summary>
-    /// Строка - значение
+    /// Цвет - значение
     /// </summary>
-    public class StringValue<T>
+    public class ColorValue<T>
     {
-        public string Date { get; set; }
+        public string Color { get; set; }
         public T Value { get; set; }
     }
 }

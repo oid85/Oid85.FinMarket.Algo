@@ -1,4 +1,6 @@
-﻿namespace Oid85.FinMarket.Algo.Core.Responses
+﻿using Oid85.FinMarket.Algo.Core.Models;
+
+namespace Oid85.FinMarket.Algo.Core.Responses
 {
     public class GetBacktestResultListResponse
     {
@@ -12,7 +14,7 @@
         public string StrategyName { get; set; }
         public string StrategyParams { get; set; }
         public string StrategyParamsHash { get; set; }
-        public double ProfitFactor { get; set; }
-        public double RecoveryFactor { get; set; }
+        public ColorValue<double> ProfitFactor { get; set; }
+        public ColorValue<double> RecoveryFactor { get; set; }
     }
 }

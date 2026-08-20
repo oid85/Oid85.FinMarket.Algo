@@ -166,8 +166,24 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     StrategyName = x.StrategyName,
                     StrategyParams = x.StrategyParams,
                     StrategyParamsHash = x.StrategyParamsHash,
-                    ProfitFactor = x.ProfitFactor.RoundTo(2),
-                    RecoveryFactor = x.RecoveryFactor.RoundTo(2)
+                    ProfitFactor = new ColorValue<double>
+                    {
+                        Value = x.ProfitFactor.RoundTo(2),
+                        Color = x.ProfitFactor switch
+                        {
+                            > 1.0 => KnownColors.Green,
+                            _ => KnownColors.White
+                        }
+                    },
+                    RecoveryFactor = new ColorValue<double>
+                    {
+                        Value = x.RecoveryFactor.RoundTo(2),
+                        Color = x.RecoveryFactor switch
+                        {
+                            > 1.0 => KnownColors.Green,
+                            _ => KnownColors.White
+                        }
+                    }
                 })]
             };
         }

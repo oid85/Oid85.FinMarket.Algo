@@ -3,7 +3,7 @@ using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Strategies
 {
-    public class MomentumControlRiskLong(
+    public class MomentumMonthControlRiskLong(
         IDataService dataService) 
         : Strategy
     {
