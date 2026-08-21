@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions
         services.AddKeyedTransient<Strategy, MomentumLong>("MomentumLong");
         services.AddKeyedTransient<Strategy, NormalizedMomentumLong>("NormalizedMomentumLong");
         services.AddKeyedTransient<Strategy, MomentumMonthControlRiskLong>("MomentumMonthControlRiskLong");
+        services.AddKeyedTransient<Strategy, MomentumWeekControlRiskLong>("MomentumWeekControlRiskLong");
         services.AddKeyedTransient<Strategy, HmaInclinationLong>("HmaInclinationLong");
     }
 }

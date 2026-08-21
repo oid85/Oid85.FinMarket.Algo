@@ -1,9 +1,10 @@
-﻿using Oid85.FinMarket.Algo.Application.Interfaces.Services;
+﻿using System.Globalization;
+using Oid85.FinMarket.Algo.Application.Interfaces.Services;
 using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Strategies
 {
-    public class MomentumMonthControlRiskLong(
+    public class MomentumWeekControlRiskLong(
         IDataService dataService) 
         : Strategy
     {
@@ -17,9 +18,12 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
             double lossPercentLimit = 2.0;
 
             for (int i = StabilizationPeriod; i < Candles.Count - 1; i++)
-            {
-                // Торгуем только в начале месяца
-                bool isBalancing = Candles[i].Date.Month == Candles[i - 1].Date.Month + 1;
+            {                
+                int numberWeekPrev = ISOWeek.GetWeekOfYear(Candles[i - 1].Date.ToDateTime(TimeOnly.MinValue));
+                int numberWeekCurr = ISOWeek.GetWeekOfYear(Candles[i].Date.ToDateTime(TimeOnly.MinValue));
+
+                // Торгуем только в начале недели
+                bool isBalancing = numberWeekCurr > numberWeekPrev;
                 
                 if (isBalancing)
                 {

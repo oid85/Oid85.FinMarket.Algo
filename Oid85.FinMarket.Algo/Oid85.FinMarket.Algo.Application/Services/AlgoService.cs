@@ -88,21 +88,23 @@ namespace Oid85.FinMarket.Algo.Application.Services
             if (string.IsNullOrEmpty(request.PortfolioName))
                 request.PortfolioName = algoSettings.Portfolios.First().Name;
 
-            var strategyExecuteResults = await ExecuteAsync(
+            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == request.PortfolioName);
+            var enabledStrategyNames = portfolioSettings!.PortfolioStrategies.Where(x => x.Enable).Select(x => x.Name).ToList();
+
+            var strategyExecuteResults = (await ExecuteAsync(
                 new()
                 {
                     PortfolioName = request.PortfolioName,
                     IsOptimization = false,
                     ProcessName = KnownProcessNames.Backtest
-                });
+                }))
+                .Where(x => enabledStrategyNames.Contains(x.StrategyName))
+                .ToList();
 
             var from = DateOnly.FromDateTime(DateTime.Today.AddDays(-1 * 365));
             var to = DateOnly.FromDateTime(DateTime.Today);
             var dates = DateUtils.GetDates(from, to);
-
-            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == request.PortfolioName);
-            var tickers = algoSettings.TickerLists.Find(x => x.Name == portfolioSettings!.TickerList)!.Tickers;
-
+                        
             var response = new MonitorResponse { Dates = dates };
 
             var portfolioData = await monitorService.GetPortfolioDataAsync(request.PortfolioName, strategyExecuteResults);
@@ -118,6 +120,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             response.PositionWeightData = GetPositionWeightData(portfolioData.PositionWeightData);
 
+            var tickers = algoSettings.TickerLists.Find(x => x.Name == portfolioSettings!.TickerList)!.Tickers;
             var instrumentData = await dataService.GetInstrumentDataAsync(tickers);
             var lots = instrumentData.ToDictionary(k => k.Key, v => v.Value.Lot ?? 1);
 

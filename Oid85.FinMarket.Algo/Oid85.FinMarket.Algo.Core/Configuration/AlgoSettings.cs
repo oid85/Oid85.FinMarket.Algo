@@ -39,6 +39,7 @@
     public class PortfolioStrategySettings
     {
         public string Name { get; set; }
+        public bool Enable { get; set; }
     }
 
     public class TickerListSettings

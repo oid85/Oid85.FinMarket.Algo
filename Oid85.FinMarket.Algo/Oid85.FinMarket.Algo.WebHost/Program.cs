@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
 using Oid85.FinMarket.Algo.Application.Extensions;
 using Oid85.FinMarket.Algo.Common.Converters;
