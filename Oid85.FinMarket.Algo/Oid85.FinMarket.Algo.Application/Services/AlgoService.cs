@@ -187,6 +187,24 @@ namespace Oid85.FinMarket.Algo.Application.Services
                             > 1.0 => KnownColors.Green,
                             _ => KnownColors.White
                         }
+                    },
+                    AnnualYieldReturn = new ColorValue<double>
+                    {
+                        Value = x.AnnualYieldReturn.RoundTo(2),
+                        Color = x.AnnualYieldReturn switch
+                        {
+                            > 15.0 => KnownColors.Green,
+                            _ => KnownColors.White
+                        }
+                    },
+                    AverageNetProfitPercent = new ColorValue<double>
+                    {
+                        Value = x.AverageNetProfitPercent.RoundTo(2),
+                        Color = x.AverageNetProfitPercent switch
+                        {
+                            > 0.0 => KnownColors.Green,
+                            _ => KnownColors.White
+                        }
                     }
                 })
                 .OrderBy(x => x.Ticker)
@@ -199,13 +217,10 @@ namespace Oid85.FinMarket.Algo.Application.Services
         {
             var algoSettings = options.Value;
 
-            if (string.IsNullOrEmpty(request.PortfolioName))
-                request.PortfolioName = algoSettings.Portfolios.First().Name;
-
-            var portfolioSettings = algoSettings.Portfolios.Find(x => x.Name == request.PortfolioName);
-
-            if (string.IsNullOrEmpty(request.StrategyName))
-                request.StrategyName = portfolioSettings!.PortfolioStrategies.First().Name;
+            if (string.IsNullOrEmpty(request.PortfolioName)) return new ();
+            if (string.IsNullOrEmpty(request.StrategyName)) return new();
+            if (string.IsNullOrEmpty(request.Ticker)) return new();
+            if (string.IsNullOrEmpty(request.StrategyParamsHash)) return new();
 
             var strategyExecuteResults = await ExecuteAsync(
                 new()
@@ -219,34 +234,50 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             var strategyExecuteResult = strategyExecuteResults.Find(x => x.StrategyParamsHash == request.StrategyParamsHash);
 
-            if (strategyExecuteResult is null)
-                return new();
+            if (strategyExecuteResult is null) return new();
+
+            var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-5));
+            var to = DateOnly.FromDateTime(DateTime.Today);
 
             var response = new GetBacktestResultResponse
             {
-                Price = new BacktestResultSeries
-                {
-                    Name = "Цена",
-                    Color = KnownColors.Blue,
-                    ColorFill = KnownColors.Blue,
-                    Data = [.. strategyExecuteResult.DiagramPoints.Select(x => new DateValue<double?> { Date = x.Date, Value = x.Price })]
-                },
+                PricePanel = [
+                    new BacktestResultSeries
+                    {
+                        Name = "Цена",
+                        Color = KnownColors.Blue,
+                        ColorFill = KnownColors.Blue,
+                        Data = [.. strategyExecuteResult
+                            .DiagramPoints                            
+                            .Select(x => new DateValue<double?> { Date = x.Date, Value = x.Price })
+                            .Where(x => x.Date >= from && x.Date <= to)]
+                    }],
 
-                Equity = new BacktestResultSeries
-                {
-                    Name = "Капитал",
-                    Color = KnownColors.Green,
-                    ColorFill = KnownColors.Green,
-                    Data = [.. strategyExecuteResult.EqiutyCurve.Select(x => new DateValue<double?> { Date = x.Key, Value = x.Value })]
-                },
+                Equity = [
+                    new BacktestResultSeries
+                    {
+                        Name = "Капитал",
+                        Color = KnownColors.Green,
+                        ColorFill = KnownColors.Green,
+                        Data = [.. strategyExecuteResult
+                            .EqiutyCurve                            
+                            .Expand(strategyExecuteResult.StartDate, strategyExecuteResult.EndDate)                            
+                            .Select(x => new DateValue<double?> { Date = x.Key, Value = x.Value })
+                            .Where(x => x.Date >= from && x.Date <= to)]
+                    },
 
-                Drawdown = new BacktestResultSeries
-                {
-                    Name = "Просадка",
-                    Color = KnownColors.Red,
-                    ColorFill = KnownColors.Red,
-                    Data = [.. strategyExecuteResult.DrawdownCurve.Select(x => new DateValue<double?> { Date = x.Key, Value = x.Value })]
-                }
+                    new BacktestResultSeries
+                    {
+                        Name = "Просадка",
+                        Color = KnownColors.Red,
+                        ColorFill = KnownColors.Red,
+                        Data = [.. strategyExecuteResult
+                            .DrawdownCurve
+                            .Expand(strategyExecuteResult.StartDate, strategyExecuteResult.EndDate)
+                            .Select(x => new DateValue<double?> { Date = x.Key, Value = -1 * x.Value })
+                            .Where(x => x.Date >= from && x.Date <= to)]
+                    }
+                ]
             };
 
             return response;

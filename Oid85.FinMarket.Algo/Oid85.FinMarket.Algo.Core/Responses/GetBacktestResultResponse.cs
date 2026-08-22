@@ -4,10 +4,8 @@ namespace Oid85.FinMarket.Algo.Core.Responses
 {
     public class GetBacktestResultResponse
     {
-        public BacktestResultSeries Price { get; set; } = new();
-        public BacktestResultSeries LongPositionCost { get; set; } = new();
-        public BacktestResultSeries Equity { get; set; } = new();
-        public BacktestResultSeries Drawdown { get; set; } = new();
+        public List<BacktestResultSeries> PricePanel { get; set; } = [];
+        public List<BacktestResultSeries> Equity { get; set; } = [];
     }
 
     public class BacktestResultSeries

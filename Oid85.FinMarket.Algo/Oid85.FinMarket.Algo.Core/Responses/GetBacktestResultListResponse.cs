@@ -16,5 +16,7 @@ namespace Oid85.FinMarket.Algo.Core.Responses
         public string StrategyParamsHash { get; set; }
         public ColorValue<double> ProfitFactor { get; set; }
         public ColorValue<double> RecoveryFactor { get; set; }
+        public ColorValue<double> AnnualYieldReturn { get; set; }
+        public ColorValue<double> AverageNetProfitPercent { get; set; }
     }
 }
