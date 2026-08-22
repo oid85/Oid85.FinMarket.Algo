@@ -1,6 +1,6 @@
 ﻿using Oid85.FinMarket.Algo.Application.Interfaces.Factories;
 using Oid85.FinMarket.Algo.Application.Mapping;
-using Oid85.FinMarket.Algo.Common.Utils;
+using Oid85.FinMarket.Algo.Common.Extensions;
 using Oid85.FinMarket.Algo.Core.Models;
 using Skender.Stock.Indicators;
 

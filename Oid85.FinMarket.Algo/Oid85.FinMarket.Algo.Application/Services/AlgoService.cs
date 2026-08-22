@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Oid85.FinMarket.Algo.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Algo.Application.Interfaces.Services;
 using Oid85.FinMarket.Algo.Application.Mapping;
+using Oid85.FinMarket.Algo.Common.Extensions;
 using Oid85.FinMarket.Algo.Common.KnownConstants;
 using Oid85.FinMarket.Algo.Common.Utils;
 using Oid85.FinMarket.Algo.Core.Configuration;
@@ -160,7 +161,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             return new GetBacktestResultListResponse
             {
-                Items = [.. strategyExecuteResults
+                Items = strategyExecuteResults
                 .Select(x =>
                 new BacktestResultItem
                 {
@@ -187,7 +188,9 @@ namespace Oid85.FinMarket.Algo.Application.Services
                             _ => KnownColors.White
                         }
                     }
-                })]
+                })
+                .OrderBy(x => x.Ticker)
+                .ToList()
             };
         }
 
@@ -226,7 +229,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     Name = "Цена",
                     Color = KnownColors.Blue,
                     ColorFill = KnownColors.Blue,
-                    Data = [.. strategyExecuteResult.DiagramPoints.Select(x => new PortfolioBacktestSeriesItem { Date = x.Date, Value = x.Price })]
+                    Data = [.. strategyExecuteResult.DiagramPoints.Select(x => new DateValue<double?> { Date = x.Date, Value = x.Price })]
                 },
 
                 Equity = new BacktestResultSeries
@@ -234,7 +237,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     Name = "Капитал",
                     Color = KnownColors.Green,
                     ColorFill = KnownColors.Green,
-                    Data = [.. strategyExecuteResult.EqiutyCurve.Select(x => new PortfolioBacktestSeriesItem { Date = x.Key, Value = x.Value })]
+                    Data = [.. strategyExecuteResult.EqiutyCurve.Select(x => new DateValue<double?> { Date = x.Key, Value = x.Value })]
                 },
 
                 Drawdown = new BacktestResultSeries
@@ -242,7 +245,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     Name = "Просадка",
                     Color = KnownColors.Red,
                     ColorFill = KnownColors.Red,
-                    Data = [.. strategyExecuteResult.DrawdownCurve.Select(x => new PortfolioBacktestSeriesItem { Date = x.Key, Value = x.Value })]
+                    Data = [.. strategyExecuteResult.DrawdownCurve.Select(x => new DateValue<double?> { Date = x.Key, Value = x.Value })]
                 }
             };
 
@@ -395,7 +398,9 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             return new StrategyListResponse
             {
-                Items = [.. portfolioSettings!.PortfolioStrategies.Select(x => new StrategyListItem { Name = x.Name })]
+                Items = [.. portfolioSettings!.PortfolioStrategies
+                    .Where(x => x.Enable)
+                    .Select(x => new StrategyListItem { Name = x.Name })]
             };
         }
 

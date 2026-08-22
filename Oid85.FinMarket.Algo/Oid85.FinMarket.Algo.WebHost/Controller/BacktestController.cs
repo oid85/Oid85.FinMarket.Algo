@@ -44,7 +44,7 @@ public class BacktestController(
     /// <summary>
     /// Результат бэктеста
     /// </summary>
-    [HttpPost("portfolio/result")]
+    [HttpPost("portfolio/result/diargam")]
     [ProducesResponseType(typeof(BaseResponse<GetBacktestResultResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BaseResponse<GetBacktestResultResponse>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(BaseResponse<GetBacktestResultResponse>), StatusCodes.Status500InternalServerError)]

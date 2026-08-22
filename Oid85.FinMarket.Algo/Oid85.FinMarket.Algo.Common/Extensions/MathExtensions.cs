@@ -1,4 +1,4 @@
-﻿namespace Oid85.FinMarket.Algo.Common.Utils
+﻿namespace Oid85.FinMarket.Algo.Common.Extensions
 {
     /// <summary>
     /// Математические операции
