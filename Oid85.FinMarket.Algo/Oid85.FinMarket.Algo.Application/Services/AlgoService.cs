@@ -713,13 +713,24 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 .Where(x => x.PortfolioName == portfolioName)
                 .Where(x => x.StrategyName == strategyName)
 				.Where(x => x.ProcessName == KnownProcessNames.Optimization)
+                .ToList();
+
+            if (strategyExecuteResults is []) return [];
+
+            var strategyExecuteResultsByTicker = strategyExecuteResults
                 .Where(x => x.Ticker == ticker)
                 .ToList();
 
-            if (strategyExecuteResults is [])
-                return [];
+            if (strategyExecuteResultsByTicker is []) return [];
 
-            var parameterSets = strategyExecuteResults
+            double tickerPercentLimit = 5.0;
+
+            double tickerPercent = Convert.ToDouble(strategyExecuteResultsByTicker.Count) / Convert.ToDouble(strategyExecuteResults.Count) * 100.0;
+            
+            // Если по тикеру результатов мало (менее 5 %), то пропускаем эти результаты
+            if (tickerPercent < tickerPercentLimit) return [];
+
+            var parameterSets = strategyExecuteResultsByTicker
                 .Select(x => JsonSerializer.Deserialize<Dictionary<string, int>>(x.StrategyParams))
                 .ToList();
 
