@@ -7,7 +7,7 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
         IIndicatorFactory indicatorFactory)
         : Strategy
     {
-        public new string Name { get; set; } = nameof(SupertrendLong);
+        public new string Name { get; set; } = nameof(UltimateSmootherInclinationLong);
 
         public new string Description { get; set; } = "Supertrend. Только лонг";
 
