@@ -7,6 +7,16 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
         IIndicatorFactory indicatorFactory) 
         : Strategy
     {
+        public new string Name { get; set; } = nameof(SupertrendLong);
+
+        public new string Description { get; set; } = "Supertrend. Только лонг";
+
+        public new List<StrategyParameter> StrategyParameters { get; set; } =
+            [
+                new () { Name = "Period", Def = 10, Min = 10, Max = 100, Step = 5 },
+                new () { Name = "Multiplier", Def = 25, Min = 20, Max = 30, Step = 5 }
+            ];
+
         public override void Execute()
         {
             // Получаем параметры

@@ -19,12 +19,12 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IIndicatorFactory, IndicatorFactory>();
 
-        services.AddKeyedTransient<Strategy, UltimateSmootherInclinationLong>("UltimateSmootherInclinationLong");        
-        services.AddKeyedTransient<Strategy, SupertrendLong>("SupertrendLong");
-        services.AddKeyedTransient<Strategy, MomentumLong>("MomentumLong");
-        services.AddKeyedTransient<Strategy, NormalizedMomentumLong>("NormalizedMomentumLong");
-        services.AddKeyedTransient<Strategy, MomentumMonthControlRiskLong>("MomentumMonthControlRiskLong");
-        services.AddKeyedTransient<Strategy, MomentumWeekControlRiskLong>("MomentumWeekControlRiskLong");
-        services.AddKeyedTransient<Strategy, HmaInclinationLong>("HmaInclinationLong");
+        services.AddKeyedTransient<Strategy, UltimateSmootherInclinationLong>(nameof(UltimateSmootherInclinationLong));        
+        services.AddKeyedTransient<Strategy, SupertrendLong>(nameof(SupertrendLong));
+        services.AddKeyedTransient<Strategy, MomentumLong>(nameof(MomentumLong));
+        services.AddKeyedTransient<Strategy, NormalizedMomentumLong>(nameof(NormalizedMomentumLong));
+        services.AddKeyedTransient<Strategy, MomentumMonthControlRiskLong>(nameof(MomentumMonthControlRiskLong));
+        services.AddKeyedTransient<Strategy, MomentumWeekControlRiskLong>(nameof(MomentumWeekControlRiskLong));
+        services.AddKeyedTransient<Strategy, HmaInclinationLong>(nameof(HmaInclinationLong));
     }
 }

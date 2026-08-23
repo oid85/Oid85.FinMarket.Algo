@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Oid85.FinMarket.Algo.Application.Interfaces.Repositories;
 using Oid85.FinMarket.Algo.Application.Interfaces.Services;
 using Oid85.FinMarket.Algo.Application.Mapping;
+using Oid85.FinMarket.Algo.Application.Strategies;
 using Oid85.FinMarket.Algo.Common.Extensions;
 using Oid85.FinMarket.Algo.Common.KnownConstants;
 using Oid85.FinMarket.Algo.Common.Utils;
@@ -450,7 +451,6 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             foreach (var portfolioStrategySettings in portfolioSettings!.PortfolioStrategies)
             {
-                var strategySettings = algoSettings.Strategies.Find(x => x.Name == portfolioStrategySettings.Name);
                 var strategy = strategyData[portfolioStrategySettings.Name];
 
                 foreach (var ticker in tickers)
@@ -464,8 +464,8 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     if (strategy.Candles is []) continue;
 
                     var parameterSets = request.IsOptimization
-                        ? GetParameterSets(strategySettings!.StrategyParameters)
-                        : await GetParameterSets(portfolioSettings.Name, strategySettings!.Name, ticker);
+                        ? GetParameterSets(strategy.StrategyParameters)
+                        : await GetParameterSets(portfolioSettings.Name, strategy.Name, ticker);
 
                     var results = Execute(strategy, parameterSets);
 
@@ -491,7 +491,6 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             foreach (var portfolioStrategySettings in portfolioSettings!.PortfolioStrategies.Where(x => x.Name == strategyName))
             {
-                var strategySettings = algoSettings.Strategies.Find(x => x.Name == portfolioStrategySettings.Name);
                 var strategy = strategyData[portfolioStrategySettings.Name];
 
                 foreach (var ticker in tickers.Where(x => x == tickerName))
@@ -505,8 +504,8 @@ namespace Oid85.FinMarket.Algo.Application.Services
                     if (strategy.Candles is []) continue;
 
                     var parameterSets = request.IsOptimization
-                        ? GetParameterSets(strategySettings!.StrategyParameters)
-                        : await GetParameterSets(portfolioSettings.Name, strategySettings!.Name, ticker);
+                        ? GetParameterSets(strategy.StrategyParameters)
+                        : await GetParameterSets(portfolioSettings.Name, strategy.Name, ticker);
 
                     var results = Execute(strategy, parameterSets);
 
@@ -571,16 +570,19 @@ namespace Oid85.FinMarket.Algo.Application.Services
         {
             var algoSettings = options.Value;
 
+            var strategyNames = algoSettings
+                .Portfolios
+                .SelectMany(x => x.PortfolioStrategies.Select(xx => xx.Name))
+                .Distinct()
+                .ToList();
+
             var strategyDictionary = new Dictionary<string, Strategy>();
 
-            foreach (var strategySettings in algoSettings.Strategies)
+            foreach (var strategyName in strategyNames)
             {
-                var strategy = serviceProvider.GetRequiredKeyedService<Strategy>(strategySettings.Name);
+                var strategy = serviceProvider.GetRequiredKeyedService<Strategy>(strategyName);
 
-                strategy.StrategyDescription = strategySettings.Description;
-                strategy.StrategyName = strategySettings.Name;
-
-                strategyDictionary.TryAdd(strategySettings.Name, strategy);
+                strategyDictionary.TryAdd(strategyName, strategy);
             }
 
             return strategyDictionary;
@@ -656,7 +658,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
         /// <summary>
         /// Получить параметры стратегии для оптимизации
         /// </summary>
-        private static List<Dictionary<string, int>> GetParameterSets(List<StrategyParameterSettings> strategyParams)
+        private static List<Dictionary<string, int>> GetParameterSets(List<StrategyParameter> strategyParams)
         {
             var result = new List<Dictionary<string, int>>();
 

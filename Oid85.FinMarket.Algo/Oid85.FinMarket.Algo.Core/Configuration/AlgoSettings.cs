@@ -6,7 +6,6 @@
         public StrategyExecuteResultFilterSettings StrategyExecuteResultFilter { get; set; }
         public List<PortfolioSettings> Portfolios { get; set; }
         public List<TickerListSettings> TickerLists { get; set; }
-        public List<StrategySettings> Strategies { get; set; }
     }
 
     public class BacktestSettings
@@ -47,21 +46,5 @@
         public string Name { get; set; }
         public string Description { get; set; }
         public List<string> Tickers { get; set; }
-    }
-
-    public class StrategySettings
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public List<StrategyParameterSettings> StrategyParameters { get; set; }
-    }
-
-    public class StrategyParameterSettings
-    {
-        public string Name { get; set; }
-        public int Def { get; set; }
-        public int Min { get; set; }
-        public int Max { get; set; }
-        public int Step { get; set; }
     }
 }

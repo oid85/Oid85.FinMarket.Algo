@@ -7,6 +7,16 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
         IDataService dataService)
         : Strategy
     {
+        public new string Name { get; set; } = nameof(MomentumLong);
+
+        public new string Description { get; set; } = "Momentum. Только лонг";
+
+        public new List<StrategyParameter> StrategyParameters { get; set; } =
+            [
+                new () { Name = "Period", Def = 10, Min = 10, Max = 100, Step = 10 },
+                new () { Name = "Percent", Def = 10, Min = 10, Max = 50, Step = 10 }
+            ];
+
         public override void Execute()
         {
             // Получаем параметры

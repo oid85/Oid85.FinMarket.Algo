@@ -2,11 +2,17 @@
 
 public class Strategy
 {
+    public string Name { get; set; } = string.Empty;
+
+    public string Description { get; set; } = string.Empty;
+
+    public List<StrategyParameter> StrategyParameters { get; set; } = [];
+
     public double StartMoney { get; set; }
 
     public double EndMoney { get; set; }
     
-    public string Ticker { get; set; } = string.Empty;    
+    public string Ticker { get; set; } = string.Empty;
     
     public string StrategyDescription { get; set; } = string.Empty;
     
