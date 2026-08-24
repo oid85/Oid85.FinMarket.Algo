@@ -214,7 +214,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
         }
 
         /// <inheritdoc />
-        public async Task<GetBacktestResultResponse> GetBacktestResultAsync(GetBacktestResultRequest request)
+        public async Task<GetBacktestResultResponse> GetBacktestResultDiagramAsync(GetBacktestResultRequest request)
         {
             var algoSettings = options.Value;
 
@@ -252,7 +252,19 @@ namespace Oid85.FinMarket.Algo.Application.Services
                             .DiagramPoints                            
                             .Select(x => new DateValue<double?> { Date = x.Date, Value = x.Price })
                             .Where(x => x.Date >= from && x.Date <= to)]
-                    }],
+                    },
+
+                    new BacktestResultSeries
+                    {
+                        Name = "Лонг",
+                        Color = KnownColors.Green,
+                        ColorFill = KnownColors.Green,
+                        Data = [.. strategyExecuteResult
+                            .DiagramPoints
+                            .Select(x => new DateValue<double?> { Date = x.Date, Value = x.LongPositionIndicator })
+                            .Where(x => x.Date >= from && x.Date <= to)]
+                    }
+                ],
 
                 Equity = [
                     new BacktestResultSeries

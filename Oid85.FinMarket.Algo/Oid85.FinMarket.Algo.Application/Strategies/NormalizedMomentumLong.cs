@@ -82,6 +82,9 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
 
                 // Отрисовка
                 DiagramPoints[i].Price = Candles[i].Close;
+
+                if (LastActivePosition is not null && LastActivePosition.IsLong)
+                    DiagramPoints[i].LongPositionIndicator = Candles[i].Close;
             }
         }
     }

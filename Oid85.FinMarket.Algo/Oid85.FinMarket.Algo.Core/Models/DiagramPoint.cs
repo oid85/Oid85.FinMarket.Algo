@@ -6,4 +6,5 @@ public class DiagramPoint
     public DateOnly Date { get; set; }
     public double? Price { get; set; } = null;
     public double? Indicator { get; set; } = null;
+    public double? LongPositionIndicator { get; set; } = null;
 }

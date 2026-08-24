@@ -48,6 +48,6 @@ namespace Oid85.FinMarket.Algo.Application.Interfaces.Services
         /// <summary>
         /// Получить диаграмму бэктеста
         /// </summary>
-        Task<GetBacktestResultResponse> GetBacktestResultAsync(GetBacktestResultRequest request);
+        Task<GetBacktestResultResponse> GetBacktestResultDiagramAsync(GetBacktestResultRequest request);
     }
 }

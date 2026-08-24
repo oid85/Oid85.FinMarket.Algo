@@ -51,6 +51,6 @@ public class BacktestController(
     public Task<IActionResult> GetBacktestResultAsync(
         [FromBody] GetBacktestResultRequest request) =>
         GetResponseAsync(
-            () => algoService.GetBacktestResultAsync(request),
+            () => algoService.GetBacktestResultDiagramAsync(request),
             result => new BaseResponse<GetBacktestResultResponse> { Result = result });
 }
