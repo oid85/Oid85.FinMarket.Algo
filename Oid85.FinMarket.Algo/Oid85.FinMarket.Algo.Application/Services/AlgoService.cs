@@ -237,7 +237,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             if (strategyExecuteResult is null) return new();
 
-            var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-5));
+            var from = DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
             var to = DateOnly.FromDateTime(DateTime.Today);
 
             var response = new GetBacktestResultResponse
