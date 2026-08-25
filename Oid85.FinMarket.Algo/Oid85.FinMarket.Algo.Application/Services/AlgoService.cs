@@ -477,7 +477,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
                     var parameterSets = request.IsOptimization
                         ? GetParameterSets(strategy.StrategyParameters)
-                        : await GetParameterSets(portfolioSettings.Name, strategy.Name, ticker);
+                        : await GetParameterSets(portfolioSettings.Name, strategy.StrategyName, ticker);
 
                     var results = Execute(strategy, parameterSets);
 
@@ -517,7 +517,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
                     var parameterSets = request.IsOptimization
                         ? GetParameterSets(strategy.StrategyParameters)
-                        : await GetParameterSets(portfolioSettings.Name, strategy.Name, ticker);
+                        : await GetParameterSets(portfolioSettings.Name, strategy.StrategyName, ticker);
 
                     var results = Execute(strategy, parameterSets);
 
@@ -724,7 +724,7 @@ namespace Oid85.FinMarket.Algo.Application.Services
             var strategyExecuteResults = (await strategyExecuteResultRepository.GetFilteredAsync())
                 .Where(x => x.PortfolioName == portfolioName)
                 .Where(x => x.StrategyName == strategyName)
-				.Where(x => x.ProcessName == KnownProcessNames.Optimization)
+                .Where(x => x.ProcessName == KnownProcessNames.Optimization)
                 .ToList();
 
             if (strategyExecuteResults is []) return [];

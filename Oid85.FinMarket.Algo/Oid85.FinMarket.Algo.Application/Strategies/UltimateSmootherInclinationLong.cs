@@ -7,11 +7,11 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
         IIndicatorFactory indicatorFactory)
         : Strategy
     {
-        public new string Name { get; set; } = nameof(UltimateSmootherInclinationLong);
+        public override string StrategyName { get; set; } = nameof(UltimateSmootherInclinationLong);
 
-        public new string Description { get; set; } = "Supertrend. Только лонг";
+        public override string StrategyDescription { get; set; } = "Supertrend. Только лонг";
 
-        public new List<StrategyParameter> StrategyParameters { get; set; } =
+        public override List<StrategyParameter> StrategyParameters { get; set; } =
             [
                 new () { Name = "Period", Def = 10, Min = 10, Max = 100, Step = 5 }
             ];

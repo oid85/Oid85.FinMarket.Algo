@@ -2,21 +2,17 @@
 
 public class Strategy
 {
-    public string Name { get; set; } = string.Empty;
+    public virtual string StrategyDescription { get; set; } = string.Empty;
 
-    public string Description { get; set; } = string.Empty;
+    public virtual string StrategyName { get; set; } = string.Empty;
 
-    public List<StrategyParameter> StrategyParameters { get; set; } = [];
+    public virtual List<StrategyParameter> StrategyParameters { get; set; } = [];
 
     public double StartMoney { get; set; }
 
     public double EndMoney { get; set; }
     
-    public string Ticker { get; set; } = string.Empty;
-    
-    public string StrategyDescription { get; set; } = string.Empty;
-    
-    public string StrategyName { get; set; } = string.Empty;
+    public string Ticker { get; set; } = string.Empty;   
 
     public string PortfolioName { get; set; } = string.Empty;
 
