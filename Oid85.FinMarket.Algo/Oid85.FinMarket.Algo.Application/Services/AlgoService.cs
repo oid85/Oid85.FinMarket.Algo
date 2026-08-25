@@ -743,10 +743,10 @@ namespace Oid85.FinMarket.Algo.Application.Services
             if (tickerPercent < tickerPercentLimit) return [];
 
             var parameterSets = strategyExecuteResultsByTicker
-                .Select(x => JsonSerializer.Deserialize<Dictionary<string, int>>(x.StrategyParams))
+                .Select(x => JsonSerializer.Deserialize<Dictionary<string, int>>(x.StrategyParams) ?? [])
                 .ToList();
 
-            return parameterSets;
+            return parameterSets ?? [];
         }
     }
 }
