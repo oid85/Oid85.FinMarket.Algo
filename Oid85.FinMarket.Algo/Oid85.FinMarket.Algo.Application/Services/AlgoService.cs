@@ -134,6 +134,8 @@ namespace Oid85.FinMarket.Algo.Application.Services
                 strategyExecuteResults.Count, 
                 lots);
 
+            response.Count = strategyExecuteResults.Count;
+
             response.Yield = GetAverageYearYieldPercent(response.Series[0]);
 
             var drawdownValues = GetDrawdownValues(response.Series[0]);
