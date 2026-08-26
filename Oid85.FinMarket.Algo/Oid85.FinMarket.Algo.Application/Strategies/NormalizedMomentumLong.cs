@@ -23,6 +23,9 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
             int period = Parameters["Period"];
             int percent = Parameters["Percent"];
 
+            // Ограничение на убыток в процентах
+            double lossPercentLimit = 2.0;
+
             for (int i = StabilizationPeriod; i < Candles.Count - 1; i++)
             {
                 // Торгуем только в начале месяца
@@ -70,7 +73,7 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
                         {
                             double lossPercent = Math.Abs(profit / EndMoney * 100.0);
 
-                            if (lossPercent >= 2.0)
+                            if (lossPercent >= lossPercentLimit)
                                 SignalCloseLong = true;
 
                         }

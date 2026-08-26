@@ -3,11 +3,11 @@ using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Strategies
 {
-    public class HmaInclinationLong(
+    public class HmaLong(
         IIndicatorFactory indicatorFactory) 
         : Strategy
     {
-        public override string StrategyName { get; set; } = nameof(HmaInclinationLong);
+        public override string StrategyName { get; set; } = nameof(HmaLong);
 
         public override string StrategyDescription { get; set; } = "Наклон HMA. Только лонг";
 

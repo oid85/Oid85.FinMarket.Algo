@@ -1,46 +1,43 @@
-﻿using Oid85.FinMarket.Algo.Application.Interfaces.Services;
+﻿using Oid85.FinMarket.Algo.Application.Interfaces.Factories;
 using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Strategies
 {
-    public class MomentumLong(
-        IDataService dataService)
+    public class UltimateSmootherLong(
+        IIndicatorFactory indicatorFactory)
         : Strategy
     {
-        public override string StrategyName { get; set; } = nameof(MomentumLong);
+        public override string StrategyName { get; set; } = nameof(UltimateSmootherLong);
 
-        public override string StrategyDescription { get; set; } = "Momentum. Только лонг";
+        public override string StrategyDescription { get; set; } = "Supertrend. Только лонг";
 
         public override List<StrategyParameter> StrategyParameters { get; set; } =
             [
-                new () { Name = "Period", Def = 10, Min = 10, Max = 100, Step = 10 },
-                new () { Name = "Percent", Def = 10, Min = 10, Max = 50, Step = 10 }
+                new () { Name = "Period", Def = 10, Min = 10, Max = 100, Step = 5 }
             ];
 
         public override void Execute()
         {
             // Получаем параметры
             int period = Parameters["Period"];
-            int percent = Parameters["Percent"];
+            
+            // Расчет индикаторов
+            var us = indicatorFactory.UltimateSmoother(ClosePrices, period);
 
             for (int i = StabilizationPeriod; i < Candles.Count - 1; i++)
             {
-                // Торгуем только в начале месяца
-                bool isBalancing = Candles[i].Date.Month == Candles[i - 1].Date.Month + 1;
-
-                if (!isBalancing)
-                    continue;
-
-                var topTickers = dataService.GetMomentumTopTickers(CandleData, Candles[i].Date, period, percent);
-
-                bool tickerInTop = topTickers.Contains(Ticker);
-
                 // Правило входа
-                SignalLong = tickerInTop;
+                SignalLong =
+                    us[i - 2] > us[i - 3] &&
+                    us[i - 1] > us[i - 2] &&
+                    us[i] > us[i - 1];
 
                 // Правило выхода
-                SignalCloseLong = !tickerInTop;
-
+                SignalCloseLong =
+                    us[i - 2] < us[i - 3] &&
+                    us[i - 1] < us[i - 2] &&
+                    us[i] < us[i - 1];
+                
                 // Задаем цену для заявки
                 double orderPrice = Candles[i].Close;
 

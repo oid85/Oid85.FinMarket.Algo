@@ -1,16 +1,15 @@
-﻿using System.Globalization;
-using Oid85.FinMarket.Algo.Application.Interfaces.Services;
+﻿using Oid85.FinMarket.Algo.Application.Interfaces.Services;
 using Oid85.FinMarket.Algo.Core.Models;
 
 namespace Oid85.FinMarket.Algo.Application.Strategies
 {
-    public class MomentumWeekControlRiskLong(
+    public class MomentumMonthLong(
         IDataService dataService) 
         : Strategy
     {
-        public override string StrategyName { get; set; } = nameof(MomentumWeekControlRiskLong);
+        public override string StrategyName { get; set; } = nameof(MomentumMonthLong);
 
-        public override string StrategyDescription { get; set; } = "Momentum. Контроль риска. Только лонг. Раз в неделю";
+        public override string StrategyDescription { get; set; } = "Momentum. Контроль риска. Только лонг. Раз в месяц";
 
         public override List<StrategyParameter> StrategyParameters { get; set; } =
             [
@@ -28,12 +27,9 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
             double lossPercentLimit = 2.0;
 
             for (int i = StabilizationPeriod; i < Candles.Count - 1; i++)
-            {                
-                int numberWeekPrev = ISOWeek.GetWeekOfYear(Candles[i - 1].Date.ToDateTime(TimeOnly.MinValue));
-                int numberWeekCurr = ISOWeek.GetWeekOfYear(Candles[i].Date.ToDateTime(TimeOnly.MinValue));
-
-                // Торгуем только в начале недели
-                bool isBalancing = numberWeekCurr > numberWeekPrev;
+            {
+                // Торгуем только в начале месяца
+                bool isBalancing = Candles[i].Date.Month == Candles[i - 1].Date.Month + 1;
                 
                 if (isBalancing)
                 {

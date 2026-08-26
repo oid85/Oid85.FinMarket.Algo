@@ -19,12 +19,11 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IIndicatorFactory, IndicatorFactory>();
 
-        services.AddKeyedTransient<Strategy, UltimateSmootherInclinationLong>(nameof(UltimateSmootherInclinationLong));        
+        services.AddKeyedTransient<Strategy, UltimateSmootherLong>(nameof(UltimateSmootherLong));        
         services.AddKeyedTransient<Strategy, SupertrendLong>(nameof(SupertrendLong));
-        services.AddKeyedTransient<Strategy, MomentumLong>(nameof(MomentumLong));
         services.AddKeyedTransient<Strategy, NormalizedMomentumLong>(nameof(NormalizedMomentumLong));
-        services.AddKeyedTransient<Strategy, MomentumMonthControlRiskLong>(nameof(MomentumMonthControlRiskLong));
-        services.AddKeyedTransient<Strategy, MomentumWeekControlRiskLong>(nameof(MomentumWeekControlRiskLong));
-        services.AddKeyedTransient<Strategy, HmaInclinationLong>(nameof(HmaInclinationLong));
+        services.AddKeyedTransient<Strategy, MomentumMonthLong>(nameof(MomentumMonthLong));
+        services.AddKeyedTransient<Strategy, MomentumWeekLong>(nameof(MomentumWeekLong));
+        services.AddKeyedTransient<Strategy, HmaLong>(nameof(HmaLong));
     }
 }
