@@ -737,11 +737,11 @@ namespace Oid85.FinMarket.Algo.Application.Services
 
             if (strategyExecuteResultsByTicker is []) return [];
 
-            double tickerPercentLimit = 5.0;
+            double tickerPercentLimit = 3.0;
 
             double tickerPercent = Convert.ToDouble(strategyExecuteResultsByTicker.Count) / Convert.ToDouble(strategyExecuteResults.Count) * 100.0;
-            
-            // Если по тикеру результатов мало (менее 5 %), то пропускаем эти результаты
+
+            // Если по тикеру результатов мало (менее tickerPercentLimit %), то пропускаем эти результаты
             if (tickerPercent < tickerPercentLimit) return [];
 
             var parameterSets = strategyExecuteResultsByTicker
