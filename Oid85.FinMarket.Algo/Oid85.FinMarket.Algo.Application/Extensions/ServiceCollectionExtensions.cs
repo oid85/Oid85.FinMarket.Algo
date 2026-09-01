@@ -21,9 +21,6 @@ public static class ServiceCollectionExtensions
 
         services.AddKeyedTransient<Strategy, UltimateSmootherLong>(nameof(UltimateSmootherLong));        
         services.AddKeyedTransient<Strategy, SupertrendLong>(nameof(SupertrendLong));
-        services.AddKeyedTransient<Strategy, NormalizedMomentumLong>(nameof(NormalizedMomentumLong));
-        services.AddKeyedTransient<Strategy, MomentumMonthLong>(nameof(MomentumMonthLong));
-        services.AddKeyedTransient<Strategy, MomentumWeekLong>(nameof(MomentumWeekLong));
         services.AddKeyedTransient<Strategy, HmaLong>(nameof(HmaLong));
         services.AddKeyedTransient<Strategy, DonchianBreakoutClassicLong>(nameof(DonchianBreakoutClassicLong));
         services.AddKeyedTransient<Strategy, DonchianBreakoutMiddleLong>(nameof(DonchianBreakoutMiddleLong));
