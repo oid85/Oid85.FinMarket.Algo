@@ -10,7 +10,7 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
     {
         public override string StrategyName { get; set; } = nameof(DonchianBreakoutClassicLong);
 
-        public override string StrategyDescription { get; set; } = "Канал Дончиана. Только лонг";
+        public override string StrategyDescription { get; set; } = "Канал Дончиана. Классический. Только лонг";
 
         public override List<StrategyParameter> StrategyParameters { get; set; } =
             [

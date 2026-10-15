@@ -9,7 +9,7 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
     {
         public override string StrategyName { get; set; } = nameof(UltimateSmootherLong);
 
-        public override string StrategyDescription { get; set; } = "Supertrend. Только лонг";
+        public override string StrategyDescription { get; set; } = "UltimateSmoother. Только лонг";
 
         public override List<StrategyParameter> StrategyParameters { get; set; } =
             [

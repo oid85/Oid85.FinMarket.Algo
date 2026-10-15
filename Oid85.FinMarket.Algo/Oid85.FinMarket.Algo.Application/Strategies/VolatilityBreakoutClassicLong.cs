@@ -10,7 +10,7 @@ namespace Oid85.FinMarket.Algo.Application.Strategies
     {
         public override string StrategyName { get; set; } = nameof(VolatilityBreakoutClassicLong);
 
-        public override string StrategyDescription { get; set; } = "Пробой волатильности. Только лонг";
+        public override string StrategyDescription { get; set; } = "Пробой волатильности. Классический. Только лонг";
 
         public override List<StrategyParameter> StrategyParameters { get; set; } =
             [
